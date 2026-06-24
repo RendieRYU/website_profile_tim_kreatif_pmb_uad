@@ -10,9 +10,10 @@ use Illuminate\Validation\Rules\Password;
 
 class AccountController extends Controller
 {
-    public function edit()
+    public function edit(\Illuminate\Http\Request $request)
     {
-        return view('admin.account.edit');
+        $user = $request->user();
+        return view('admin.account.edit', compact('user'));
     }
 
     public function update(Request $request)

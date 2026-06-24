@@ -22,6 +22,10 @@
                 <input type="time" name="event_time" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 mb-1">Tautan Postingan / Sosmed (Opsional)</label>
+                <input type="url" name="link" placeholder="Contoh: https://instagram.com/..." class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-slate-700 mb-2">Petugas Bertugas</label>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-4 border border-slate-200 rounded-lg bg-slate-50">
                     @foreach($members as $member)

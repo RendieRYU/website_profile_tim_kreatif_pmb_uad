@@ -320,8 +320,8 @@
                                     </template>
                                 </div>
                                 
-                                <template x-if="event.extendedProps.external_link">
-                                    <a :href="event.extendedProps.external_link" target="_blank" class="inline-block mt-3 text-xs bg-slate-100 hover:bg-blue-100 hover:text-blue-600 text-slate-700 px-3 py-1.5 rounded-lg transition-colors font-medium"><i class="fas fa-external-link-alt mr-1"></i> Buka Tautan</a>
+                                <template x-if="event.extendedProps.link">
+                                    <a :href="event.extendedProps.link" target="_blank" class="inline-block mt-3 text-xs bg-slate-100 hover:bg-blue-100 hover:text-blue-600 text-slate-700 px-3 py-1.5 rounded-lg transition-colors font-medium"><i class="fas fa-external-link-alt mr-1"></i> Buka Tautan Postingan</a>
                                 </template>
                             </div>
                         </template>
@@ -451,7 +451,7 @@
                                     time: event.formatted_time ? event.formatted_time : 'Seharian',
                                     description: event.description,
                                     members: event.members,
-                                    external_link: event.external_link
+                                    link: event.link
                                 }
                             };
                         });

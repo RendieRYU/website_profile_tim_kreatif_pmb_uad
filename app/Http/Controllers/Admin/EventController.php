@@ -17,7 +17,7 @@ class EventController extends Controller
     }
     public function store(Request $request) {
         $validated = $request->validate([
-            'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable|date_format:H:i', 'external_link' => 'nullable|url'
+            'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable|date_format:H:i', 'link' => 'nullable|url'
         ]);
         $event = Event::create($validated);
         if ($request->has('members')) {
@@ -36,7 +36,7 @@ class EventController extends Controller
     }
     public function update(Request $request, Event $event) {
         $validated = $request->validate([
-            'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable', 'external_link' => 'nullable|url'
+            'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable', 'link' => 'nullable|url'
         ]);
         $event->update($validated);
         if ($request->has('members')) {
