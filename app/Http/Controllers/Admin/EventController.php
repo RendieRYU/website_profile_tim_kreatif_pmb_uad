@@ -1,0 +1,58 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Event;
+use App\Models\Member;
+
+class EventController extends Controller
+{
+    public function index() { 
+        $events = Event::latest('event_date')->paginate(10);
+        return view('admin.events.index', compact('events')); 
+    }
+    public function create() { 
+        $members = Member::with('division')->get();
+        return view('admin.events.create', compact('members')); 
+    }
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable|date_format:H:i', 'external_link' => 'nullable|url'
+        ]);
+        $event = Event::create($validated);
+        if ($request->has('members')) {
+            $syncData = [];
+            foreach ($request->members as $memberId) {
+                $member = Member::find($memberId);
+                if ($member) $syncData[$memberId] = ['division_id' => $member->division_id];
+            }
+            $event->members()->sync($syncData);
+        }
+        return redirect()->route('admin.events.index')->with('success', 'Kegiatan berhasil ditambahkan.');
+    }
+    public function edit(Event $event) { 
+        $members = Member::with('division')->get();
+        return view('admin.events.edit', compact('event', 'members')); 
+    }
+    public function update(Request $request, Event $event) {
+        $validated = $request->validate([
+            'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable', 'external_link' => 'nullable|url'
+        ]);
+        $event->update($validated);
+        if ($request->has('members')) {
+            $syncData = [];
+            foreach ($request->members as $memberId) {
+                $member = Member::find($memberId);
+                if ($member) $syncData[$memberId] = ['division_id' => $member->division_id];
+            }
+            $event->members()->sync($syncData);
+        } else {
+            $event->members()->detach();
+        }
+        return redirect()->route('admin.events.index')->with('success', 'Kegiatan berhasil diperbarui.');
+    }
+    public function destroy(Event $event) {
+        $event->delete();
+        return redirect()->route('admin.events.index')->with('success', 'Kegiatan berhasil dihapus.');
+    }
+}
