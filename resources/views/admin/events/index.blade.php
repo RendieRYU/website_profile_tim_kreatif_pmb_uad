@@ -19,7 +19,7 @@
         <tbody>
             @forelse($events as $event)
             <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td class="p-4 text-slate-600">{{ $event->id }}</td>
+                <td class="p-4 text-slate-600">{{ $events->firstItem() + $loop->index }}</td>
                 <td class="p-4 font-bold text-slate-800">{{ $event->title }}</td>
                 <td class="p-4 text-slate-600">
                     <i class="far fa-calendar-alt mr-1"></i> {{ $event->event_date->format('d M Y') }}<br>

@@ -43,8 +43,14 @@
             <a href="{{ route('admin.events.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-calendar-check w-5"></i> Kegiatan
             </a>
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
+                <i class="fas fa-tags w-5"></i> Kategori Kegiatan
+            </a>
             <a href="{{ route('admin.news.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.news.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-newspaper w-5"></i> Berita/Portofolio
+            </a>
+            <a href="{{ route('admin.metrics.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.metrics.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
+                <i class="fas fa-chart-line w-5"></i> Statistik & Metrik
             </a>
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-cog w-5"></i> Pengaturan

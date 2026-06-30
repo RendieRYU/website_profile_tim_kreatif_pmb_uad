@@ -19,7 +19,7 @@
         <tbody>
             @forelse($members as $member)
             <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td class="p-4 text-slate-600">{{ $member->id }}</td>
+                <td class="p-4 text-slate-600">{{ $members->firstItem() + $loop->index }}</td>
                 <td class="p-4">
                     @if($member->photo)
                         <img src="{{ asset('storage/'.$member->photo) }}" class="w-10 h-10 rounded-full object-cover">

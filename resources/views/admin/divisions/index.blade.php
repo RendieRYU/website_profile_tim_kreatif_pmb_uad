@@ -18,7 +18,7 @@
         <tbody>
             @forelse($divisions as $division)
             <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td class="p-4 text-slate-600">{{ $division->id }}</td>
+                <td class="p-4 text-slate-600">{{ $loop->iteration }}</td>
                 <td class="p-4 font-bold text-slate-800">{{ $division->name }}</td>
                 <td class="p-4">
                     <div class="flex items-center gap-2">

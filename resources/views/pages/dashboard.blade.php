@@ -28,7 +28,7 @@
 </section>
 
 <!-- Pencapaian & Statistik Section -->
-<section class="py-16 bg-slate-50" id="pencapaian">
+<section class="py-16 bg-slate-50" id="pencapaian" data-aos="fade-up">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
             <h2 class="text-3xl font-bold text-slate-800">Statistik & Pencapaian</h2>
@@ -37,13 +37,19 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Pendaftar UAD -->
-            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center">
-                <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-6 text-3xl">
-                    <i class="fas fa-users"></i>
+            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center relative overflow-hidden">
+                <div class="w-full flex justify-between items-center mb-6 relative z-10">
+                    <div class="text-left">
+                        <h3 class="text-4xl font-extrabold text-slate-800">{{ $settings['registrant_count'] ?? 0 }}</h3>
+                        <p class="text-slate-500 font-bold">Pendaftar UAD</p>
+                    </div>
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                        <i class="fas fa-users"></i>
+                    </div>
                 </div>
-                <h3 class="text-5xl font-extrabold text-slate-800 mb-2">{{ $settings['registrant_count'] ?? 0 }}</h3>
-                <p class="text-slate-500 font-bold text-lg">Pendaftar UAD</p>
-                <p class="text-sm text-slate-400 mt-2">Tahun berjalan</p>
+                <div class="relative h-[120px] w-full mt-auto">
+                    <canvas id="registrantChart"></canvas>
+                </div>
             </div>
 
             <!-- Recap Kegiatan Divisi -->
@@ -74,8 +80,8 @@
 </section>
 
 <!-- Social Media Performance -->
-<section class="py-16 bg-white border-t border-slate-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeTab: 'instagram' }">
+<section class="py-16 bg-white border-t border-slate-100" data-aos="fade-up">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeTab: 'total' }">
         <div class="text-center mb-10">
             <h2 class="text-3xl font-bold text-slate-800">Performa Media Sosial</h2>
             <div class="w-24 h-1 bg-blue-600 mx-auto mt-4 rounded"></div>
@@ -83,11 +89,14 @@
 
         <!-- Tabs -->
         <div class="flex justify-center mb-8">
-            <div class="inline-flex bg-slate-100 rounded-full p-1 shadow-inner">
-                <button @click="activeTab = 'instagram'" :class="{'bg-white text-blue-600 shadow-sm font-bold': activeTab === 'instagram', 'text-slate-500 hover:text-slate-700 font-medium': activeTab !== 'instagram'}" class="px-8 py-2.5 rounded-full text-sm transition-all flex items-center">
+            <div class="inline-flex bg-slate-100 rounded-full p-1 shadow-inner flex-wrap justify-center">
+                <button @click="activeTab = 'total'" :class="{'bg-white text-blue-600 shadow-sm font-bold': activeTab === 'total', 'text-slate-500 hover:text-slate-700 font-medium': activeTab !== 'total'}" class="px-6 md:px-8 py-2.5 rounded-full text-sm transition-all flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-lg" :class="{'text-blue-500': activeTab === 'total'}"></i> Total
+                </button>
+                <button @click="activeTab = 'instagram'" :class="{'bg-white text-blue-600 shadow-sm font-bold': activeTab === 'instagram', 'text-slate-500 hover:text-slate-700 font-medium': activeTab !== 'instagram'}" class="px-6 md:px-8 py-2.5 rounded-full text-sm transition-all flex items-center">
                     <i class="fab fa-instagram mr-2 text-lg" :class="{'text-pink-500': activeTab === 'instagram'}"></i> Instagram
                 </button>
-                <button @click="activeTab = 'tiktok'" :class="{'bg-white text-blue-600 shadow-sm font-bold': activeTab === 'tiktok', 'text-slate-500 hover:text-slate-700 font-medium': activeTab !== 'tiktok'}" class="px-8 py-2.5 rounded-full text-sm transition-all flex items-center">
+                <button @click="activeTab = 'tiktok'" :class="{'bg-white text-blue-600 shadow-sm font-bold': activeTab === 'tiktok', 'text-slate-500 hover:text-slate-700 font-medium': activeTab !== 'tiktok'}" class="px-6 md:px-8 py-2.5 rounded-full text-sm transition-all flex items-center">
                     <i class="fab fa-tiktok mr-2 text-lg" :class="{'text-black': activeTab === 'tiktok'}"></i> TikTok
                 </button>
             </div>
@@ -96,44 +105,78 @@
         <!-- Content Area -->
         <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[400px]">
             
+            <!-- Total View -->
+            <div x-show="activeTab === 'total'" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="flex flex-col md:flex-row min-h-[400px] w-full">
+                <!-- Left: Chart -->
+                <div class="md:w-5/12 bg-slate-50 border-r border-slate-100 p-8 flex flex-col justify-center relative">
+                    <h4 class="text-lg font-bold text-slate-800 mb-6 flex items-center">
+                        <i class="fas fa-chart-line text-blue-500 mr-2"></i> Perbandingan Followers / Views
+                    </h4>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="totalChart"></canvas>
+                    </div>
+                </div>
+                <!-- Right: Details -->
+                <div class="md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
+                    <h3 class="text-3xl font-bold text-slate-800 mb-4">Total Keseluruhan Live</h3>
+                    <p class="text-slate-600 mb-8 leading-relaxed text-lg">
+                        Akumulasi keseluruhan tayangan langsung (Live) dari platform Instagram dan TikTok.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-blue-50 border border-blue-100 p-6 rounded-2xl">
+                            <h4 class="text-slate-500 font-medium mb-2">Total Sesi Live</h4>
+                            <p class="text-4xl font-extrabold text-blue-600">{{ $igTotalLive + $ttTotalLive }} <span class="text-lg font-medium text-slate-500">kali</span></p>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-100 p-6 rounded-2xl">
+                            <h4 class="text-slate-500 font-medium mb-2">Total Impresi / Penonton</h4>
+                            <p class="text-4xl font-extrabold text-purple-600">{{ number_format($igTotalImpressions + $ttTotalImpressions, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Instagram View -->
             <div x-show="activeTab === 'instagram'" 
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-y-4"
                  x-transition:enter-end="opacity-100 translate-y-0"
+                 style="display: none;"
                  class="flex flex-col md:flex-row min-h-[400px] w-full">
-                @if(isset($settings['instagram_image']) && $settings['instagram_image'])
-                <div class="md:w-5/12 bg-slate-100 relative overflow-hidden">
-                    <img src="{{ asset('storage/'.$settings['instagram_image']) }}" alt="Instagram Image" class="absolute inset-0 w-full h-full object-cover">
-                </div>
-                @else
-                <div class="md:w-5/12 bg-gradient-to-br from-pink-500 via-purple-500 to-orange-400 p-8 flex items-center justify-center relative overflow-hidden">
-                    <i class="fab fa-instagram text-[200px] md:text-[300px] text-white opacity-20 absolute -right-10 -bottom-10"></i>
-                    <div class="text-center relative z-10">
-                        <div class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg border border-white/30">
-                            <i class="fab fa-instagram text-4xl text-white"></i>
+                <!-- Left: Chart -->
+                <div class="md:w-5/12 bg-pink-50/30 border-r border-slate-100 p-8 flex flex-col justify-center relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-lg font-bold text-slate-800 flex items-center">
+                            <i class="fas fa-chart-line text-pink-500 mr-2"></i> Grafik Followers IG
+                        </h4>
+                        <div class="text-right">
+                            @php $latestIg = end($chartData['instagram']); @endphp
+                            <span class="text-xl font-extrabold text-pink-600">{{ $latestIg ? number_format($latestIg, 0, ',', '.') : 0 }}</span>
                         </div>
-                        <h3 class="text-3xl font-bold text-white mb-2">Instagram</h3>
-                        <p class="text-pink-100 font-medium tracking-wide">PMB UAD OFFICIAL</p>
+                    </div>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="igChart"></canvas>
                     </div>
                 </div>
-                @endif
+                <!-- Right: Details -->
                 <div class="md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-                    <h3 class="text-3xl font-bold text-slate-800 mb-4">Performa Instagram</h3>
+                    <h3 class="text-3xl font-bold text-slate-800 mb-4 flex items-center"><i class="fab fa-instagram text-pink-500 mr-3"></i> Performa Instagram</h3>
                     <p class="text-slate-600 mb-8 leading-relaxed text-lg">
                         {{ $settings['instagram_description'] ?? 'Platform utama untuk membagikan info pendaftaran, dokumentasi acara, dan materi visual menarik seputar kehidupan kampus UAD.' }}
                     </p>
                     
-                    <div class="mb-8">
-                        <h4 class="text-lg font-bold text-slate-800 flex items-center mb-4">
-                            <i class="fas fa-chart-line text-blue-500 mr-2"></i> Statistik Utama
-                        </h4>
-                        <div class="inline-flex items-center bg-slate-50 px-6 py-3 rounded-xl border border-slate-100">
-                            <div class="mr-4 text-slate-400 text-2xl"><i class="fas fa-users"></i></div>
-                            <div>
-                                <p class="text-sm text-slate-500 font-medium">Total Followers</p>
-                                <p class="text-2xl font-extrabold text-slate-800">{{ $settings['ig_followers'] ?? '0' }}</p>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-slate-50 border border-slate-100 p-6 rounded-2xl">
+                            <h4 class="text-slate-500 font-medium mb-2">Total Sesi Live IG</h4>
+                            <p class="text-3xl font-extrabold text-slate-800">{{ $igTotalLive }} <span class="text-sm font-medium text-slate-500">kali</span></p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-100 p-6 rounded-2xl">
+                            <h4 class="text-slate-500 font-medium mb-2">Total Impresi Live IG</h4>
+                            <p class="text-3xl font-extrabold text-slate-800">{{ number_format($igTotalImpressions, 0, ',', '.') }}</p>
                         </div>
                     </div>
                     
@@ -166,38 +209,36 @@
                  x-transition:enter-end="opacity-100 translate-y-0"
                  style="display: none;"
                  class="flex flex-col md:flex-row min-h-[400px] w-full">
-                @if(isset($settings['tiktok_image']) && $settings['tiktok_image'])
-                <div class="md:w-5/12 bg-slate-100 relative overflow-hidden">
-                    <img src="{{ asset('storage/'.$settings['tiktok_image']) }}" alt="TikTok Image" class="absolute inset-0 w-full h-full object-cover">
-                </div>
-                @else
-                <div class="md:w-5/12 bg-gradient-to-br from-slate-800 to-black p-8 flex items-center justify-center relative overflow-hidden">
-                    <i class="fab fa-tiktok text-[200px] md:text-[300px] text-white opacity-10 absolute -left-10 -bottom-10"></i>
-                    <div class="text-center relative z-10">
-                        <div class="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg border border-white/20">
-                            <i class="fab fa-tiktok text-4xl text-white"></i>
+                <!-- Left: Chart -->
+                <div class="md:w-5/12 bg-slate-50 border-r border-slate-100 p-8 flex flex-col justify-center relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-lg font-bold text-slate-800 flex items-center">
+                            <i class="fas fa-chart-line text-black mr-2"></i> Grafik Views / Followers TikTok
+                        </h4>
+                        <div class="text-right">
+                            @php $latestTt = end($chartData['tiktok']); @endphp
+                            <span class="text-xl font-extrabold text-slate-800">{{ $latestTt ? number_format($latestTt, 0, ',', '.') : 0 }}</span>
                         </div>
-                        <h3 class="text-3xl font-bold text-white mb-2">TikTok</h3>
-                        <p class="text-slate-400 font-medium tracking-wide">@PMB.UAD</p>
+                    </div>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="tiktokChart"></canvas>
                     </div>
                 </div>
-                @endif
+                <!-- Right: Details -->
                 <div class="md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-                    <h3 class="text-3xl font-bold text-slate-800 mb-4">Performa TikTok</h3>
+                    <h3 class="text-3xl font-bold text-slate-800 mb-4 flex items-center"><i class="fab fa-tiktok text-black mr-3"></i> Performa TikTok</h3>
                     <p class="text-slate-600 mb-8 leading-relaxed text-lg">
                         {{ $settings['tiktok_description'] ?? 'Media utama untuk konten video pendek yang menghibur dan edukatif, berfokus pada tren terkini dan cerita mahasiswa.' }}
                     </p>
                     
-                    <div class="mb-8">
-                        <h4 class="text-lg font-bold text-slate-800 flex items-center mb-4">
-                            <i class="fas fa-chart-bar text-blue-500 mr-2"></i> Statistik Utama
-                        </h4>
-                        <div class="inline-flex items-center bg-slate-50 px-6 py-3 rounded-xl border border-slate-100">
-                            <div class="mr-4 text-slate-400 text-2xl"><i class="fas fa-eye"></i></div>
-                            <div>
-                                <p class="text-sm text-slate-500 font-medium">Total Views</p>
-                                <p class="text-2xl font-extrabold text-slate-800">{{ $settings['tiktok_views'] ?? '0' }}</p>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-slate-50 border border-slate-100 p-6 rounded-2xl">
+                            <h4 class="text-slate-500 font-medium mb-2">Total Sesi Live TikTok</h4>
+                            <p class="text-3xl font-extrabold text-slate-800">{{ $ttTotalLive }} <span class="text-sm font-medium text-slate-500">kali</span></p>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-100 p-6 rounded-2xl">
+                            <h4 class="text-slate-500 font-medium mb-2">Total Impresi Live TikTok</h4>
+                            <p class="text-3xl font-extrabold text-slate-800">{{ number_format($ttTotalImpressions, 0, ',', '.') }}</p>
                         </div>
                     </div>
                     
@@ -227,130 +268,9 @@
     </div>
 </section>
 
-<!-- Kalender Section -->
-<section class="py-16 bg-slate-50 border-t border-slate-100" id="kegiatan" x-data="calendarApp()">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-slate-800">Kalender Kegiatan</h2>
-            <div class="w-24 h-1 bg-blue-600 mx-auto mt-4 rounded"></div>
-            <p class="mt-4 text-slate-600">Jadwal kegiatan seluruh divisi Tim Kreatif PMB UAD</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left: Calendar -->
-            <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-8">
-                    <button @click="prevMonth()" class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center hover:bg-orange-200 transition-colors focus:outline-none">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <div class="px-8 py-3 bg-orange-100 text-orange-800 font-bold rounded-full text-xl shadow-sm">
-                        <span x-text="monthNames[currentMonth]"></span> <span x-text="currentYear"></span>
-                    </div>
-                    <button @click="nextMonth()" class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center hover:bg-orange-200 transition-colors focus:outline-none">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-                <!-- Grid -->
-                <div class="grid grid-cols-7 gap-4 mb-4 text-center text-sm font-bold text-slate-500">
-                    <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
-                </div>
-                <div class="grid grid-cols-7 gap-4 text-center">
-                    <template x-for="(day, index) in blankdays" :key="'blank'+index">
-                        <div class="p-3 border border-transparent"></div>
-                    </template>
-                    <template x-for="(date, dateIndex) in no_of_days" :key="dateIndex">
-                        <div @click="selectDate(date)" class="p-3 border border-slate-100 rounded-xl cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all min-h-[90px] flex flex-col items-center justify-start relative group" :class="{'bg-blue-50 border-blue-200 ring-2 ring-blue-500 ring-offset-2': isSelected(date)}">
-                            <span class="text-xl font-medium text-slate-700" x-text="date" :class="{'text-blue-600 font-bold': isSelected(date)}"></span>
-                            
-                            <!-- Events Indicator -->
-                            <div class="w-full mt-auto pt-2 space-y-1.5 px-1">
-                                <template x-for="event in getEventsForDate(date).slice(0, 3)">
-                                    <div class="h-1.5 w-full rounded-full" :style="'background-color: ' + getEventColor(event)"></div>
-                                </template>
-                                <template x-if="getEventsForDate(date).length > 3">
-                                    <div class="text-[10px] text-slate-400 font-bold mt-1">+<span x-text="getEventsForDate(date).length - 3"></span></div>
-                                </template>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Right: Details & Legend -->
-            <div class="space-y-6">
-                <!-- Event Details -->
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 min-h-[300px]">
-                    <h3 class="font-bold text-slate-800 text-lg mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                        <i class="far fa-calendar-alt text-blue-500 text-xl"></i> 
-                        <span>Kegiatan <span x-text="selectedDate + ' ' + monthNames[currentMonth]"></span></span>
-                    </h3>
-                    
-                    <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                        <template x-if="selectedEvents.length === 0">
-                            <div class="text-center py-8">
-                                <div class="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-                                    <i class="fas fa-mug-hot"></i>
-                                </div>
-                                <p class="text-slate-500 italic text-sm">Tidak ada kegiatan di tanggal ini.</p>
-                            </div>
-                        </template>
-                        <template x-for="event in selectedEvents">
-                            <div class="border-l-4 pl-4 py-3 hover:bg-slate-50 rounded-r-lg transition-colors cursor-pointer" :style="'border-color: ' + getEventColor(event)">
-                                <h4 class="font-bold text-slate-800" x-text="event.title"></h4>
-                                <p class="text-sm text-slate-500 mt-1"><i class="far fa-clock mr-1 text-blue-500"></i> <span x-text="event.extendedProps.time"></span></p>
-                                <template x-if="event.extendedProps.description">
-                                    <p class="text-sm text-slate-600 mt-2" x-text="event.extendedProps.description"></p>
-                                </template>
-                                
-                                <!-- Members list -->
-                                <div class="mt-3 space-y-2">
-                                    <template x-if="event.extendedProps.members.length === 0">
-                                        <p class="text-xs text-slate-400 italic">Belum ada petugas</p>
-                                    </template>
-                                    <template x-for="member in event.extendedProps.members">
-                                        <div class="flex items-start gap-2">
-                                            <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" :style="'background-color: ' + (member.pivot_division ? member.pivot_division.color_hex : '#64748B')"></div>
-                                            <div class="flex flex-col">
-                                                <span class="text-sm font-medium text-slate-700" x-text="member.full_name"></span>
-                                                <span class="text-xs text-slate-500" x-text="member.pivot_division ? member.pivot_division.name : 'Anggota'"></span>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                                
-                                <template x-if="event.extendedProps.link">
-                                    <a :href="event.extendedProps.link" target="_blank" class="inline-block mt-3 text-xs bg-slate-100 hover:bg-blue-100 hover:text-blue-600 text-slate-700 px-3 py-1.5 rounded-lg transition-colors font-medium"><i class="fas fa-external-link-alt mr-1"></i> Buka Tautan Postingan</a>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                <!-- Legend -->
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
-                    <h3 class="font-bold text-slate-800 text-lg mb-6">Legenda Kategori</h3>
-                    <div class="space-y-3">
-                        @foreach(\App\Models\Division::all() as $division)
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 rounded-md mr-3 shadow-sm" style="background-color: {{ $division->color_hex }}"></div>
-                            <span class="text-slate-600 font-medium">{{ $division->name }}</span>
-                        </div>
-                        @endforeach
-                        <div class="flex items-center">
-                            <div class="w-5 h-5 rounded-md mr-3 bg-blue-500 shadow-sm"></div>
-                            <span class="text-slate-600 font-medium">Kegiatan Umum</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Berita/Kegiatan Terkini Section -->
-<section class="py-16 bg-white border-t border-slate-100" id="berita">
+<section class="py-16 bg-white border-t border-slate-100" id="berita" data-aos="fade-up">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
             <h2 class="text-3xl font-bold text-slate-800">Berita & Kegiatan Terkini</h2>
@@ -400,121 +320,197 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    function calendarApp() {
-        return {
-            monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
-            currentMonth: new Date().getMonth(),
-            currentYear: new Date().getFullYear(),
-            no_of_days: [],
-            blankdays: [],
-            events: [],
-            selectedDate: new Date().getDate(),
-            selectedEvents: [],
+    document.addEventListener('alpine:init', () => {
+        // Prepare data from server
+        const chartLabels = {!! json_encode($chartData['labels']) !!};
+        const regData = {!! json_encode($chartData['registrant']) !!};
+        const igData = {!! json_encode($chartData['instagram']) !!};
+        const tiktokData = {!! json_encode($chartData['tiktok']) !!};
 
-            init() {
-                this.getNoOfDays();
-                this.fetchEvents();
-                this.$watch('currentMonth', () => this.fetchEvents());
-                this.$watch('currentYear', () => this.fetchEvents());
-            },
-
-            getNoOfDays() {
-                let daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-                let dayOfWeek = new Date(this.currentYear, this.currentMonth).getDay();
-                
-                let blankdaysArray = [];
-                for (var i = 1; i <= dayOfWeek; i++) {
-                    blankdaysArray.push(i);
+        // Shared chart options
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#1e293b',
+                    bodyColor: '#334155',
+                    borderColor: '#e2e8f0',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false,
                 }
-                
-                let daysArray = [];
-                for (var i = 1; i <= daysInMonth; i++) {
-                    daysArray.push(i);
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { family: "'Inter', sans-serif" }, color: '#64748b' }
+                },
+                y: {
+                    border: { display: false },
+                    grid: { color: '#f1f5f9' },
+                    ticks: { font: { family: "'Inter', sans-serif" }, color: '#94a3b8' }
                 }
-                
-                this.blankdays = blankdaysArray;
-                this.no_of_days = daysArray;
-            },
-
-            fetchEvents() {
-                fetch(`/api/events/${this.currentYear}/${this.currentMonth + 1}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        this.events = data.map(event => {
-                            return {
-                                id: event.id,
-                                title: event.title,
-                                date: parseInt(event.event_date.split('-')[2]),
-                                backgroundColor: this.getEventColor(event),
-                                extendedProps: {
-                                    time: event.formatted_time ? event.formatted_time : 'Seharian',
-                                    description: event.description,
-                                    members: event.members,
-                                    link: event.link
-                                }
-                            };
-                        });
-                        this.updateSelectedEvents();
-                    });
-            },
-
-            getEventsForDate(date) {
-                return this.events.filter(e => e.date === date);
-            },
-
-            selectDate(date) {
-                this.selectedDate = date;
-                this.updateSelectedEvents();
-            },
-
-            isSelected(date) {
-                return this.selectedDate === date;
-            },
-
-            updateSelectedEvents() {
-                this.selectedEvents = this.getEventsForDate(this.selectedDate);
-            },
-
-            nextMonth() {
-                if (this.currentMonth == 11) {
-                    this.currentMonth = 0;
-                    this.currentYear++;
-                } else {
-                    this.currentMonth++;
-                }
-                this.getNoOfDays();
-                this.selectedDate = 1;
-            },
-
-            prevMonth() {
-                if (this.currentMonth == 0) {
-                    this.currentMonth = 11;
-                    this.currentYear--;
-                } else {
-                    this.currentMonth--;
-                }
-                this.getNoOfDays();
-                this.selectedDate = 1;
-            },
-
-            getEventColor(event) {
-                if (event.members && event.members.length > 0 && event.members[0].pivot_division) {
-                    return event.members[0].pivot_division.color_hex;
-                }
-                if (event.extendedProps && event.extendedProps.members && event.extendedProps.members.length > 0 && event.extendedProps.members[0].pivot_division) {
-                    return event.extendedProps.members[0].pivot_division.color_hex;
-                }
-                return '#3B82F6';
-            },
-
-            getEventDivName(event) {
-                if (event.extendedProps && event.extendedProps.members && event.extendedProps.members.length > 0 && event.extendedProps.members[0].pivot_division) {
-                    return event.extendedProps.members[0].pivot_division.name;
-                }
-                return 'Kegiatan Umum';
             }
+        };
+
+        // Total Combined Chart
+        if(document.getElementById('totalChart')) {
+            new Chart(document.getElementById('totalChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Followers IG',
+                            data: igData,
+                            borderColor: '#ec4899',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#ec4899',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: false,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'TikTok Views',
+                            data: tiktokData,
+                            borderColor: '#0f172a',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#0f172a',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: { family: "'Inter', sans-serif" },
+                                color: '#475569',
+                                usePointStyle: true,
+                                boxWidth: 8
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#1e293b',
+                            bodyColor: '#334155',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: true,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: "'Inter', sans-serif" }, color: '#64748b' }
+                        },
+                        y: {
+                            border: { display: false },
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { family: "'Inter', sans-serif" }, color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
         }
-    }
+
+        // Registrant Chart
+        if(document.getElementById('registrantChart')) {
+            new Chart(document.getElementById('registrantChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Pendaftar',
+                        data: regData,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#2563eb',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+
+        // Instagram Chart
+        if(document.getElementById('igChart')) {
+            new Chart(document.getElementById('igChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Followers IG',
+                        data: igData,
+                        borderColor: '#ec4899',
+                        backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#ec4899',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+
+        // TikTok Chart
+        if(document.getElementById('tiktokChart')) {
+            new Chart(document.getElementById('tiktokChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'TikTok Metrics',
+                        data: tiktokData,
+                        borderColor: '#0f172a',
+                        backgroundColor: 'rgba(15, 23, 42, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#0f172a',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+    });
+
+
 </script>
+
 @endpush

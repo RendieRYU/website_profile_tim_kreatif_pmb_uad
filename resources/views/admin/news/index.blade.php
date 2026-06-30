@@ -19,7 +19,7 @@
         <tbody>
             @forelse($news as $item)
             <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td class="p-4 text-slate-600">{{ $item->id }}</td>
+                <td class="p-4 text-slate-600">{{ $news->firstItem() + $loop->index }}</td>
                 <td class="p-4 font-bold text-slate-800">{{ $item->title }}</td>
                 <td class="p-4 text-slate-600">{{ $item->published_date->format('d M Y') }}</td>
                 <td class="p-4 text-slate-600">

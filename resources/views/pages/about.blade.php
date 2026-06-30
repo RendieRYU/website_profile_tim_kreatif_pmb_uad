@@ -3,7 +3,7 @@
 @section('content')
 <div class="py-12 bg-slate-50 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
+        <div class="text-center mb-16" data-aos="fade-up">
             <h1 class="text-4xl font-bold text-slate-800">Tentang Kami</h1>
             <div class="w-24 h-1 bg-blue-600 mx-auto mt-4 rounded"></div>
             <p class="mt-4 text-slate-600 text-lg max-w-3xl mx-auto">Kami adalah tim yang berdedikasi untuk memperkenalkan dan mempromosikan Universitas Ahmad Dahlan melalui berbagai media kreatif.</p>
@@ -12,7 +12,7 @@
         @if($periods->count() > 0)
         <div x-data="{ activePeriod: {{ $periods->first()->id }} }">
             <!-- Period Tabs -->
-            <div class="flex flex-wrap justify-center gap-3 mb-12">
+            <div class="flex flex-wrap justify-center gap-3 mb-12" data-aos="fade-up" data-aos-delay="100">
                 @foreach($periods as $period)
                 <button 
                     @click="activePeriod = {{ $period->id }}"
@@ -24,7 +24,7 @@
             </div>
 
             <!-- Members Grid -->
-            <div>
+            <div data-aos="fade-up" data-aos-delay="200">
                 @foreach($periods as $period)
                 <div x-show="activePeriod === {{ $period->id }}" 
                      x-transition:enter="transition ease-out duration-300"
@@ -69,7 +69,7 @@
             </div>
         </div>
         @else
-        <div class="text-center py-12 bg-white rounded-2xl border border-slate-100">
+        <div class="text-center py-12 bg-white rounded-2xl border border-slate-100" data-aos="fade-in">
             <i class="fas fa-calendar-times text-5xl text-slate-300 mb-4"></i>
             <h3 class="text-xl font-bold text-slate-700">Belum Ada Periode</h3>
             <p class="text-slate-500 mt-2">Data periode dan anggota belum ditambahkan.</p>

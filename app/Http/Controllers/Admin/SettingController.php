@@ -19,18 +19,22 @@ class SettingController extends Controller
     {
         $data = $request->except(['_token']);
         if ($request->hasFile('team_photo')) {
+            if ($old = Setting::get('team_photo')) \Illuminate\Support\Facades\Storage::disk('public')->delete($old);
             $path = $request->file('team_photo')->store('settings', 'public');
             $data['team_photo'] = $path;
         }
         if ($request->hasFile('site_logo')) {
+            if ($old = Setting::get('site_logo')) \Illuminate\Support\Facades\Storage::disk('public')->delete($old);
             $path = $request->file('site_logo')->store('settings', 'public');
             $data['site_logo'] = $path;
         }
         if ($request->hasFile('instagram_image')) {
+            if ($old = Setting::get('instagram_image')) \Illuminate\Support\Facades\Storage::disk('public')->delete($old);
             $path = $request->file('instagram_image')->store('settings', 'public');
             $data['instagram_image'] = $path;
         }
         if ($request->hasFile('tiktok_image')) {
+            if ($old = Setting::get('tiktok_image')) \Illuminate\Support\Facades\Storage::disk('public')->delete($old);
             $path = $request->file('tiktok_image')->store('settings', 'public');
             $data['tiktok_image'] = $path;
         }

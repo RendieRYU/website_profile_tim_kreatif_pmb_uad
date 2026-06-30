@@ -13,6 +13,16 @@ class Period extends Model
         return $this->hasMany(Member::class);
     }
 
+    public function metrics()
+    {
+        return $this->hasMany(Metric::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

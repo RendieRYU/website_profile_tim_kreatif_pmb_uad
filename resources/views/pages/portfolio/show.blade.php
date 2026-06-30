@@ -4,7 +4,7 @@
 <div class="py-12 bg-slate-50">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-8 relative">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-8 relative" data-aos="fade-up">
             <div class="h-32" style="background-color: {{ $member->division->color_hex ?? '#1D4ED8' }}"></div>
             <div class="px-8 pb-8 flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-20 gap-6">
                 <div class="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-full p-2 shadow-lg">
@@ -37,7 +37,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Riwayat Kegiatan -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6" data-aos="fade-up" data-aos-delay="100">
                 <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><i class="fas fa-calendar-check text-blue-600"></i> Riwayat Kegiatan</h3>
                 @if($member->events->count() > 0)
                     <div class="space-y-4">
@@ -54,7 +54,7 @@
             </div>
 
             <!-- Riwayat Berita / Portofolio -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6" data-aos="fade-up" data-aos-delay="200">
                 <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><i class="fas fa-newspaper text-blue-600"></i> Hasil Karya / Berita</h3>
                 @if($member->news->count() > 0)
                     <div class="space-y-4">

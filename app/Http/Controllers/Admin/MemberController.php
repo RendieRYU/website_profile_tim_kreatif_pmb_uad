@@ -9,7 +9,11 @@ use App\Models\Division;
 class MemberController extends Controller
 {
     public function index() { 
-        $members = Member::with(['period', 'division'])->latest()->paginate(10);
+        $activePeriod = Period::where('is_active', true)->first();
+        if (!$activePeriod) {
+            return redirect()->route('admin.dashboard')->with('error', 'Belum ada periode yang aktif.');
+        }
+        $members = Member::with(['period', 'division'])->where('period_id', $activePeriod->id)->latest()->paginate(10);
         return view('admin.members.index', compact('members')); 
     }
     public function create() { 

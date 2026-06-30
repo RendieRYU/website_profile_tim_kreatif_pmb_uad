@@ -16,4 +16,19 @@ class Member extends Model
     public function getTotalEventsAttribute() { return $this->events()->count(); }
     public function getTotalWorksAttribute() { return $this->news()->count(); }
     public function getSlugAttribute() { return \Illuminate\Support\Str::slug($this->full_name); }
+
+    protected static function booted()
+    {
+        static::updating(function ($member) {
+            if ($member->isDirty('photo') && $member->getOriginal('photo')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($member->getOriginal('photo'));
+            }
+        });
+
+        static::deleted(function ($member) {
+            if ($member->photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($member->photo);
+            }
+        });
+    }
 }

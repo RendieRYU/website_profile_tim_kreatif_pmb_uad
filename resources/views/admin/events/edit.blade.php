@@ -22,6 +22,28 @@
                 <input type="time" name="event_time" value="{{ $event->event_time ? $event->event_time->format('H:i') : '' }}" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                <select name="status" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="ide" {{ $event->status == 'ide' ? 'selected' : '' }}>Ide</option>
+                    <option value="ditunda" {{ $event->status == 'ditunda' ? 'selected' : '' }}>Ditunda</option>
+                    <option value="selesai" {{ $event->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 mb-2">Kategori Kegiatan</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 border border-slate-200 rounded-lg bg-slate-50">
+                    @foreach($categories as $category)
+                    <label class="flex items-center space-x-3 bg-white p-2 border border-slate-100 rounded shadow-sm hover:bg-blue-50 cursor-pointer transition-colors">
+                        <input type="checkbox" name="categories[]" value="{{ $category->id }}" {{ in_array($category->id, $event->categories->pluck('id')->toArray()) ? 'checked' : '' }} class="form-checkbox h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
+                        <span class="text-slate-700 text-sm font-medium">
+                            <span class="inline-block w-3 h-3 rounded-full mr-1" style="background-color: {{ $category->color }}"></span>
+                            {{ $category->name }}
+                        </span>
+                    </label>
+                    @endforeach
+                </div>
+            </div>
+            <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-slate-700 mb-1">Tautan Postingan / Sosmed (Opsional)</label>
                 <input type="url" name="link" value="{{ $event->link }}" placeholder="Contoh: https://instagram.com/..." class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>

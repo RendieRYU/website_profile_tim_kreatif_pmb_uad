@@ -18,7 +18,7 @@
         <tbody>
             @forelse($periods as $period)
             <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                <td class="p-4 text-slate-600">{{ $period->id }}</td>
+                <td class="p-4 text-slate-600">{{ $loop->iteration }}</td>
                 <td class="p-4 font-bold text-slate-800">{{ $period->name }}</td>
                 <td class="p-4">
                     @if($period->is_active)

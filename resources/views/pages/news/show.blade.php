@@ -17,7 +17,7 @@
         </div>
 
         <div class="prose prose-lg prose-blue max-w-none text-slate-700">
-            {!! nl2br(e($news->content)) !!}
+            {!! $news->content !!}
         </div>
 
         @if($news->members->count() > 0)

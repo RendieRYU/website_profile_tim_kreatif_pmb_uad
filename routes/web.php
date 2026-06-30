@@ -7,10 +7,12 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventApiController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\Admin;
 
 // Public Routes
 Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/kalender', [CalendarController::class, 'index'])->name('calendar');
 Route::get('/tentang-kami', [AboutController::class, 'index'])->name('about');
 Route::get('/portofolio', [PortfolioController::class, 'index'])->name('portfolio.index');
 Route::get('/portofolio/anggota/{slug}', [PortfolioController::class, 'show'])->name('portfolio.show');
@@ -30,8 +32,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('members', Admin\MemberController::class);
     Route::resource('periods', Admin\PeriodController::class);
     Route::resource('divisions', Admin\DivisionController::class);
+    Route::resource('categories', Admin\CategoryController::class);
     Route::resource('events', Admin\EventController::class);
     Route::resource('news', Admin\NewsController::class);
+    Route::resource('metrics', Admin\MetricController::class)->except(['show', 'edit', 'update']);
 
     Route::get('/settings', [Admin\SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [Admin\SettingController::class, 'update'])->name('settings.update');

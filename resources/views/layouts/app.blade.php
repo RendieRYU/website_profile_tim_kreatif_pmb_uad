@@ -26,6 +26,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- FullCalendar CSS -->
@@ -68,6 +70,7 @@
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="{{ route('home') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Dashboard</a>
+                    <a href="{{ route('calendar') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Kalender</a>
                     <a href="{{ route('about') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Tentang Kami</a>
                     <a href="{{ route('portfolio.index') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Portofolio</a>
                     @auth
@@ -87,6 +90,7 @@
         <div x-show="open" class="md:hidden bg-white border-t" x-transition>
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="{{ route('home') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Dashboard</a>
+                <a href="{{ route('calendar') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Kalender</a>
                 <a href="{{ route('about') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Tentang Kami</a>
                 <a href="{{ route('portfolio.index') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Portofolio</a>
                 @auth
@@ -120,5 +124,16 @@
     </footer>
 
     @stack('scripts')
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100,
+            });
+        });
+    </script>
 </body>
 </html>
