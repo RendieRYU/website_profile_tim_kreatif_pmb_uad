@@ -32,6 +32,9 @@ class PeriodController extends Controller
         return redirect()->route('admin.periods.index')->with('success', 'Periode berhasil diperbarui.');
     }
     public function destroy(Period $period) {
+        if ($period->members()->count() > 0 || $period->events()->count() > 0) {
+            return redirect()->route('admin.periods.index')->with('error', 'Periode tidak dapat dihapus karena masih memiliki anggota atau kegiatan yang terdaftar.');
+        }
         $period->delete();
         return redirect()->route('admin.periods.index')->with('success', 'Periode berhasil dihapus.');
     }

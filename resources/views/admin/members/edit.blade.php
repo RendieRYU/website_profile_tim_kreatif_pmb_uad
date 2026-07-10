@@ -36,11 +36,16 @@
                 <input type="text" name="role" value="{{ $member->role }}" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Foto Profile</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Foto Profile (Rasio 3x4)</label>
                 @if($member->photo)
-                    <img src="{{ asset('storage/'.$member->photo) }}" class="w-16 h-16 rounded-lg mb-2 object-cover">
+                    <img src="{{ asset('storage/'.$member->photo) }}" class="w-24 h-32 rounded-lg mb-2 object-cover border border-slate-200">
                 @endif
-                <input type="file" name="photo" class="w-full p-2 border border-slate-300 rounded-lg text-sm">
+                <input type="file" id="photo_input" class="w-full p-2 border border-slate-300 rounded-lg text-sm" accept="image/*">
+                <input type="hidden" name="cropped_photo" id="cropped_photo_input">
+                <div class="mt-4 hidden" id="preview_container">
+                    <p class="text-xs text-slate-500 mb-2">Preview Hasil Crop Baru:</p>
+                    <img id="preview_image" src="" class="w-24 h-32 rounded-lg shadow-sm object-cover border border-slate-200">
+                </div>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Instagram (Link)</label>
@@ -50,10 +55,6 @@
                 <label class="block text-sm font-medium text-slate-700 mb-1">LinkedIn (Link)</label>
                 <input type="url" name="linkedin" value="{{ $member->linkedin }}" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">GitHub (Link)</label>
-                <input type="url" name="github" value="{{ $member->github }}" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-            </div>
         </div>
         <div class="mt-8">
             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Simpan Perubahan</button>
@@ -61,4 +62,103 @@
         </div>
     </form>
 </div>
+
+<!-- Cropper Modal -->
+<div id="cropper_modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-75 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h3 class="text-lg font-bold text-slate-800">Crop Foto Profil (3x4)</h3>
+            <button type="button" id="close_modal_btn" class="text-slate-500 hover:text-slate-700"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <div class="p-4 flex-1 overflow-hidden bg-slate-900 flex items-center justify-center min-h-[300px]">
+            <div class="w-full max-w-md">
+                <img id="cropper_image" src="" class="max-w-full block">
+            </div>
+        </div>
+        <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+            <button type="button" id="cancel_crop_btn" class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Batal</button>
+            <button type="button" id="crop_btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Gunakan Foto</button>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+@endpush
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const photoInput = document.getElementById('photo_input');
+        const cropperModal = document.getElementById('cropper_modal');
+        const cropperImage = document.getElementById('cropper_image');
+        const closeBtn = document.getElementById('close_modal_btn');
+        const cancelBtn = document.getElementById('cancel_crop_btn');
+        const cropBtn = document.getElementById('crop_btn');
+        
+        const previewContainer = document.getElementById('preview_container');
+        const previewImage = document.getElementById('preview_image');
+        const croppedPhotoInput = document.getElementById('cropped_photo_input');
+
+        let cropper;
+
+        photoInput.addEventListener('change', function (e) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    cropperImage.src = event.target.result;
+                    cropperModal.classList.remove('hidden');
+                    
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    
+                    cropper = new Cropper(cropperImage, {
+                        aspectRatio: 3 / 4,
+                        viewMode: 2,
+                        background: false,
+                    });
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        const closeModal = () => {
+            cropperModal.classList.add('hidden');
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            if (!croppedPhotoInput.value) {
+                photoInput.value = '';
+            }
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        cropBtn.addEventListener('click', function () {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    width: 600,
+                    height: 800,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+                
+                const base64Data = canvas.toDataURL('image/png');
+                
+                previewImage.src = base64Data;
+                previewContainer.classList.remove('hidden');
+                
+                croppedPhotoInput.value = base64Data;
+                
+                closeModal();
+            }
+        });
+    });
+</script>
+@endpush

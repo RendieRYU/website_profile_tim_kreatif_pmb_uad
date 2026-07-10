@@ -18,7 +18,8 @@ class EventController extends Controller
         return view('admin.events.index', compact('events')); 
     }
     public function create() { 
-        $members = Member::with('division')->get();
+        $activePeriod = \App\Models\Period::where('is_active', true)->first();
+        $members = $activePeriod ? Member::with('division')->where('period_id', $activePeriod->id)->get() : collect();
         $categories = Category::all();
         return view('admin.events.create', compact('members', 'categories')); 
     }
@@ -30,7 +31,7 @@ class EventController extends Controller
 
         $validated = $request->validate([
             'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable|date_format:H:i', 'link' => 'nullable|url',
-            'status' => 'required|in:ide,ditunda,selesai'
+            'status' => 'required|in:ide,acc,selesai,ditunda,terjadwal'
         ]);
         
         $validated['period_id'] = $activePeriod->id;
@@ -40,7 +41,13 @@ class EventController extends Controller
             $syncData = [];
             foreach ($request->members as $memberId) {
                 $member = Member::find($memberId);
-                if ($member) $syncData[$memberId] = ['division_id' => $member->division_id];
+                if ($member) {
+                    $role = $request->member_roles[$memberId] ?? null;
+                    $syncData[$memberId] = [
+                        'division_id' => $member->division_id,
+                        'role' => $role
+                    ];
+                }
             }
             $event->members()->sync($syncData);
         }
@@ -50,21 +57,28 @@ class EventController extends Controller
         return redirect()->route('admin.events.index')->with('success', 'Kegiatan berhasil ditambahkan.');
     }
     public function edit(Event $event) { 
-        $members = Member::with('division')->get();
+        $activePeriod = \App\Models\Period::where('is_active', true)->first();
+        $members = $activePeriod ? Member::with('division')->where('period_id', $activePeriod->id)->get() : collect();
         $categories = Category::all();
         return view('admin.events.edit', compact('event', 'members', 'categories')); 
     }
     public function update(Request $request, Event $event) {
         $validated = $request->validate([
             'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable', 'link' => 'nullable|url',
-            'status' => 'required|in:ide,ditunda,selesai'
+            'status' => 'required|in:ide,acc,selesai,ditunda,terjadwal'
         ]);
         $event->update($validated);
         if ($request->has('members')) {
             $syncData = [];
             foreach ($request->members as $memberId) {
                 $member = Member::find($memberId);
-                if ($member) $syncData[$memberId] = ['division_id' => $member->division_id];
+                if ($member) {
+                    $role = $request->member_roles[$memberId] ?? null;
+                    $syncData[$memberId] = [
+                        'division_id' => $member->division_id,
+                        'role' => $role
+                    ];
+                }
             }
             $event->members()->sync($syncData);
         } else {

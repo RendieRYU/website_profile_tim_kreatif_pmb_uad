@@ -25,9 +25,18 @@ class MemberController extends Controller
         $validated = $request->validate([
             'full_name' => 'required', 'nickname' => 'nullable', 'role' => 'nullable',
             'period_id' => 'required|exists:periods,id', 'division_id' => 'required|exists:divisions,id',
-            'linkedin' => 'nullable|url', 'instagram' => 'nullable|url', 'github' => 'nullable|url',
+            'linkedin' => 'nullable|url', 'instagram' => 'nullable|url',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
-        if ($request->hasFile('photo')) {
+        if ($request->filled('cropped_photo')) {
+            $image_parts = explode(";base64,", $request->cropped_photo);
+            if (count($image_parts) == 2) {
+                $image_base64 = base64_decode($image_parts[1]);
+                $fileName = 'members/' . \Illuminate\Support\Str::uuid() . '.png';
+                \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $image_base64);
+                $validated['photo'] = $fileName;
+            }
+        } elseif ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('members', 'public');
         }
         Member::create($validated);
@@ -42,9 +51,18 @@ class MemberController extends Controller
         $validated = $request->validate([
             'full_name' => 'required', 'nickname' => 'nullable', 'role' => 'nullable',
             'period_id' => 'required|exists:periods,id', 'division_id' => 'required|exists:divisions,id',
-            'linkedin' => 'nullable|url', 'instagram' => 'nullable|url', 'github' => 'nullable|url',
+            'linkedin' => 'nullable|url', 'instagram' => 'nullable|url',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
-        if ($request->hasFile('photo')) {
+        if ($request->filled('cropped_photo')) {
+            $image_parts = explode(";base64,", $request->cropped_photo);
+            if (count($image_parts) == 2) {
+                $image_base64 = base64_decode($image_parts[1]);
+                $fileName = 'members/' . \Illuminate\Support\Str::uuid() . '.png';
+                \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $image_base64);
+                $validated['photo'] = $fileName;
+            }
+        } elseif ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('members', 'public');
         }
         $member->update($validated);

@@ -11,7 +11,7 @@ class Event extends Model
 
     public function period() { return $this->belongsTo(Period::class); }
 
-    public function members() { return $this->belongsToMany(Member::class)->withPivot('division_id')->withTimestamps(); }
+    public function members() { return $this->belongsToMany(Member::class)->withPivot('division_id', 'role')->withTimestamps(); }
 
     public function categories() { return $this->belongsToMany(Category::class)->withTimestamps(); }
 }

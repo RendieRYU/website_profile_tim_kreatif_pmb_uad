@@ -27,19 +27,26 @@ Route::get('/api/events/{year}/{month}', [EventApiController::class, 'getMonthEv
 
 // Admin Routes
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    // Shared Routes
     Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard');
-
-    Route::resource('members', Admin\MemberController::class);
-    Route::resource('periods', Admin\PeriodController::class);
-    Route::resource('divisions', Admin\DivisionController::class);
-    Route::resource('categories', Admin\CategoryController::class);
-    Route::resource('events', Admin\EventController::class);
-    Route::resource('news', Admin\NewsController::class);
-    Route::resource('metrics', Admin\MetricController::class)->except(['show', 'edit', 'update']);
-
-    Route::get('/settings', [Admin\SettingController::class, 'index'])->name('settings.index');
-    Route::post('/settings', [Admin\SettingController::class, 'update'])->name('settings.update');
-
     Route::get('/account', [Admin\AccountController::class, 'edit'])->name('account.edit');
     Route::put('/account', [Admin\AccountController::class, 'update'])->name('account.update');
+
+    // Routes exclusively for Anggota
+    Route::middleware(['anggota'])->group(function () {
+        Route::resource('works', Admin\WorkController::class);
+    });
+
+    // Routes exclusively for Admin
+    Route::middleware(['admin'])->group(function () {
+        Route::resource('members', Admin\MemberController::class);
+        Route::resource('periods', Admin\PeriodController::class);
+        Route::resource('divisions', Admin\DivisionController::class);
+        Route::resource('categories', Admin\CategoryController::class);
+        Route::resource('events', Admin\EventController::class);
+        Route::resource('news', Admin\NewsController::class);
+        Route::resource('metrics', Admin\MetricController::class)->except(['show', 'edit', 'update']);
+        Route::get('/settings', [Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [Admin\SettingController::class, 'update'])->name('settings.update');
+    });
 });

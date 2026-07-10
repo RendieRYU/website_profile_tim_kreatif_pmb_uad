@@ -2,27 +2,16 @@
 
 @section('content')
 
-<!-- Hero Section -->
-<section class="relative bg-blue-900 text-white py-20 overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-400 via-blue-900 to-slate-900"></div>
+<section class="relative w-full aspect-video flex items-center justify-center text-white overflow-hidden bg-cover bg-[center_30%]"
+         style="background-image: url('{{ isset($settings['team_photo']) && $settings['team_photo'] ? asset('storage/'.$settings['team_photo']) : '' }}');">
+    <!-- Dark overlay to ensure text readability -->
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-[1px]"></div>
     
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">Tim Kreatif PMB UAD</h1>
-        <p class="text-xl text-blue-200 mb-12 max-w-2xl mx-auto">Kami berkreasi, menginspirasi, dan menjangkau lebih luas untuk Penerimaan Mahasiswa Baru Universitas Ahmad Dahlan.</p>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-8 drop-shadow-md">Tim Kreatif PMB UAD</h1>
         
-        @if(isset($settings['team_photo']) && $settings['team_photo'])
-        <div class="max-w-5xl mx-auto bg-white p-3 rounded-3xl shadow-2xl transform hover:scale-[1.01] transition-transform duration-500">
-            <div class="rounded-2xl overflow-hidden border border-slate-100 relative">
-                <img src="{{ asset('storage/'.$settings['team_photo']) }}" alt="Foto Bersama Tim Kreatif" class="w-full h-auto object-cover max-h-[500px]">
-                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur text-blue-900 font-bold px-4 py-2 rounded-lg shadow-sm">
-                    <i class="fas fa-users mr-2"></i> Keluarga Besar Tim Kreatif
-                </div>
-            </div>
-        </div>
-        @endif
-        
-        <div class="mt-12">
-            <a href="#kegiatan" class="px-8 py-3 bg-white text-blue-900 font-bold rounded-full hover:bg-blue-50 transition-all hover:shadow-lg inline-block">Jelajahi Kegiatan</a>
+        <div class="mt-8">
+            <a href="#kegiatan" class="px-8 py-3.5 bg-white text-blue-900 font-bold rounded-full hover:bg-blue-50 transition-all hover:shadow-lg inline-block shadow-md">Jelajahi Kegiatan</a>
         </div>
     </div>
 </section>
@@ -40,7 +29,7 @@
             <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center relative overflow-hidden">
                 <div class="w-full flex justify-between items-center mb-6 relative z-10">
                     <div class="text-left">
-                        <h3 class="text-4xl font-extrabold text-slate-800">{{ $settings['registrant_count'] ?? 0 }}</h3>
+                        <h3 class="text-4xl font-extrabold text-slate-800">{{ number_format($latestRegistrant, 0, ',', '.') }}</h3>
                         <p class="text-slate-500 font-bold">Pendaftar UAD</p>
                     </div>
                     <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
@@ -154,8 +143,7 @@
                             <i class="fas fa-chart-line text-pink-500 mr-2"></i> Grafik Followers IG
                         </h4>
                         <div class="text-right">
-                            @php $latestIg = end($chartData['instagram']); @endphp
-                            <span class="text-xl font-extrabold text-pink-600">{{ $latestIg ? number_format($latestIg, 0, ',', '.') : 0 }}</span>
+                            <span class="text-xl font-extrabold text-pink-600">{{ $latestInstagram ? number_format($latestInstagram, 0, ',', '.') : 0 }}</span>
                         </div>
                     </div>
                     <div class="relative h-[250px] w-full">
@@ -213,11 +201,10 @@
                 <div class="md:w-5/12 bg-slate-50 border-r border-slate-100 p-8 flex flex-col justify-center relative">
                     <div class="flex justify-between items-center mb-6">
                         <h4 class="text-lg font-bold text-slate-800 flex items-center">
-                            <i class="fas fa-chart-line text-black mr-2"></i> Grafik Views / Followers TikTok
+                            <i class="fas fa-chart-line text-black mr-2"></i> Grafik Followers TikTok
                         </h4>
                         <div class="text-right">
-                            @php $latestTt = end($chartData['tiktok']); @endphp
-                            <span class="text-xl font-extrabold text-slate-800">{{ $latestTt ? number_format($latestTt, 0, ',', '.') : 0 }}</span>
+                            <span class="text-xl font-extrabold text-slate-800">{{ $latestTiktok ? number_format($latestTiktok, 0, ',', '.') : 0 }}</span>
                         </div>
                     </div>
                     <div class="relative h-[250px] w-full">
@@ -380,7 +367,7 @@
                             tension: 0.4
                         },
                         {
-                            label: 'TikTok Views',
+                            label: 'TikTok Followers',
                             data: tiktokData,
                             borderColor: '#0f172a',
                             backgroundColor: 'transparent',
@@ -491,7 +478,7 @@
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'TikTok Metrics',
+                        label: 'TikTok Followers',
                         data: tiktokData,
                         borderColor: '#0f172a',
                         backgroundColor: 'rgba(15, 23, 42, 0.1)',

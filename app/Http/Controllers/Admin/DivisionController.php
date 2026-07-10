@@ -20,6 +20,9 @@ class DivisionController extends Controller
         return redirect()->route('admin.divisions.index')->with('success', 'Divisi berhasil diperbarui.');
     }
     public function destroy(Division $division) {
+        if ($division->members()->count() > 0) {
+            return redirect()->route('admin.divisions.index')->with('error', 'Divisi tidak dapat dihapus karena masih memiliki anggota.');
+        }
         $division->delete();
         return redirect()->route('admin.divisions.index')->with('success', 'Divisi berhasil dihapus.');
     }

@@ -16,7 +16,7 @@
             <select name="type" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
                 <option value="registrant">Pendaftar UAD</option>
                 <option value="instagram">Followers/Engagement Instagram</option>
-                <option value="tiktok">Views/Engagement TikTok</option>
+                <option value="tiktok">Followers TikTok</option>
                 <option value="instagram_live">Live Instagram (Penonton)</option>
                 <option value="tiktok_live">Live TikTok (Penonton)</option>
             </select>

@@ -49,7 +49,9 @@
                                         :class="{
                                             'bg-green-500': event.status === 'selesai',
                                             'bg-yellow-500': event.status === 'ide',
-                                            'bg-red-500': event.status === 'ditunda'
+                                            'bg-red-500': event.status === 'ditunda',
+                                            'bg-blue-500': event.status === 'acc',
+                                            'bg-purple-500': event.status === 'terjadwal'
                                         }"></span>
                                     <span class="text-[10px] uppercase font-medium tracking-wider text-slate-400" x-text="event.status"></span>
                                 </div>
@@ -112,7 +114,9 @@
                                 :class="{
                                     'bg-green-500': selectedEvent?.status === 'selesai',
                                     'bg-yellow-500': selectedEvent?.status === 'ide',
-                                    'bg-red-500': selectedEvent?.status === 'ditunda'
+                                    'bg-red-500': selectedEvent?.status === 'ditunda',
+                                    'bg-blue-500': selectedEvent?.status === 'acc',
+                                    'bg-purple-500': selectedEvent?.status === 'terjadwal'
                                 }"></span>
                             <span class="text-sm font-medium capitalize" x-text="selectedEvent?.status"></span>
                         </div>
@@ -124,8 +128,28 @@
                             <template x-for="cat in selectedEvent?.categories">
                                 <span class="text-[11px] px-2 py-1 rounded text-white" :style="'background-color: ' + cat.color" x-text="cat.name"></span>
                             </template>
+                            <template x-if="!selectedEvent?.categories || selectedEvent?.categories.length === 0">
+                                <span class="text-sm text-slate-500 italic">-</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-24 text-slate-400 text-sm flex items-center gap-2 mt-0.5"><i class="fas fa-users w-4"></i> Anggota</div>
+                        <div class="flex flex-col gap-1.5 flex-1">
                             <template x-for="member in selectedEvent?.members">
-                                <span class="text-[11px] px-2 py-1 rounded text-white" :style="'background-color: ' + member.color" x-text="member.full_name"></span>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full" :style="'background-color: ' + member.color"></span>
+                                    <span class="text-sm text-slate-700 font-medium">
+                                        <span x-text="member.full_name"></span>
+                                        <template x-if="member.pivot && member.pivot.role">
+                                            <span class="text-slate-500 font-normal" x-text="' - ' + member.pivot.role"></span>
+                                        </template>
+                                    </span>
+                                </div>
+                            </template>
+                            <template x-if="!selectedEvent?.members || selectedEvent?.members.length === 0">
+                                <span class="text-sm text-slate-500 italic">Belum ada petugas</span>
                             </template>
                         </div>
                     </div>

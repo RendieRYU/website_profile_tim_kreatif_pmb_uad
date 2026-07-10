@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Tim Kreatif PMB UAD')</title>
+    <!-- Favicon -->
+    @if(\App\Models\Setting::get('site_logo'))
+        <link rel="icon" href="{{ asset('storage/' . \App\Models\Setting::get('site_logo')) }}">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}">
+    @endif
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -59,7 +65,7 @@
                     <a href="{{ route('home') }}" class="flex items-center gap-2">
                         <!-- Use Logo if available, otherwise text -->
                         @if(\App\Models\Setting::get('site_logo'))
-                            <img src="{{ asset('storage/' . \App\Models\Setting::get('site_logo')) }}" alt="Logo" class="h-10 w-auto object-contain">
+                            <img src="{{ asset('storage/' . \App\Models\Setting::get('site_logo')) }}" alt="Logo" class="h-10 w-10 rounded-full object-cover">
                         @else
                             <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
                                 TK
@@ -102,8 +108,7 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="flex-grow pt-20 animate-fade-in">
+    <main class="flex-grow pt-16 animate-fade-in">
         @yield('content')
     </main>
 

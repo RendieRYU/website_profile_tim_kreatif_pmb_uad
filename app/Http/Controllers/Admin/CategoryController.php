@@ -48,6 +48,9 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        if ($category->events()->count() > 0) {
+            return redirect()->route('admin.categories.index')->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh kegiatan.');
+        }
         $category->delete();
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus.');
     }

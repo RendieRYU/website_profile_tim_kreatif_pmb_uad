@@ -53,20 +53,26 @@
                 @endif
             </div>
 
-            <!-- Riwayat Berita / Portofolio -->
+            <!-- Riwayat Hasil Karya -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6" data-aos="fade-up" data-aos-delay="200">
-                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><i class="fas fa-newspaper text-blue-600"></i> Hasil Karya / Berita</h3>
-                @if($member->news->count() > 0)
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><i class="fas fa-briefcase text-blue-600"></i> Hasil Karya</h3>
+                @if($member->works->count() > 0)
                     <div class="space-y-4">
-                        @foreach($member->news as $news)
-                        <a href="{{ route('news.show', $news->slug) }}" class="block p-4 rounded-xl border border-slate-100 hover:border-blue-300 hover:shadow-md transition-all group">
-                            <h4 class="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ $news->title }}</h4>
-                            <p class="text-sm text-slate-500 mt-1"><i class="far fa-calendar-alt"></i> {{ $news->published_date->format('d M Y') }}</p>
-                        </a>
+                        @foreach($member->works as $work)
+                        <div class="p-4 rounded-xl border border-slate-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-slate-800">{{ $work->title }}</h4>
+                            <div class="flex items-center gap-3 mt-2 text-sm">
+                                <span class="text-slate-500"><i class="far fa-calendar-alt"></i> {{ $work->work_date->format('d M Y') }}</span>
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs border border-blue-100">{{ $work->work_type }}</span>
+                                @if($work->link)
+                                    <a href="{{ $work->link }}" target="_blank" class="text-blue-600 hover:underline"><i class="fas fa-external-link-alt"></i> Lihat Karya</a>
+                                @endif
+                            </div>
+                        </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-slate-500 italic">Belum ada karya yang dipublikasikan.</p>
+                    <p class="text-slate-500 italic">Belum ada karya yang diunggah.</p>
                 @endif
             </div>
         </div>

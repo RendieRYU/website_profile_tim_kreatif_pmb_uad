@@ -12,7 +12,6 @@
                 <th class="p-4 font-medium text-slate-600">ID</th>
                 <th class="p-4 font-medium text-slate-600">Judul</th>
                 <th class="p-4 font-medium text-slate-600">Tanggal Publish</th>
-                <th class="p-4 font-medium text-slate-600">Kreator</th>
                 <th class="p-4 font-medium text-slate-600 text-right">Aksi</th>
             </tr>
         </thead>
@@ -22,9 +21,6 @@
                 <td class="p-4 text-slate-600">{{ $news->firstItem() + $loop->index }}</td>
                 <td class="p-4 font-bold text-slate-800">{{ $item->title }}</td>
                 <td class="p-4 text-slate-600">{{ $item->published_date->format('d M Y') }}</td>
-                <td class="p-4 text-slate-600">
-                    <span class="px-2 py-1 bg-slate-100 rounded-lg text-xs">{{ $item->members->count() }} Anggota</span>
-                </td>
                 <td class="p-4 text-right space-x-2">
                     <a href="{{ route('news.show', $item->slug) }}" target="_blank" class="text-green-500 hover:text-green-700" title="Lihat"><i class="fas fa-eye"></i></a>
                     <a href="{{ route('admin.news.edit', $item) }}" class="text-blue-500 hover:text-blue-700" title="Edit"><i class="fas fa-edit"></i></a>
@@ -36,7 +32,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="5" class="p-8 text-center text-slate-500">Belum ada data berita.</td>
+                <td colspan="4" class="p-8 text-center text-slate-500">Belum ada data berita.</td>
             </tr>
             @endforelse
         </tbody>

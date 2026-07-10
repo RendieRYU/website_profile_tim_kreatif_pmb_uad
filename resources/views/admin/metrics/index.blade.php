@@ -12,7 +12,7 @@
         <a href="{{ route('admin.metrics.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == '' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' }}">Semua</a>
         <a href="{{ route('admin.metrics.index', ['type' => 'registrant']) }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == 'registrant' ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' }}">Pendaftar UAD</a>
         <a href="{{ route('admin.metrics.index', ['type' => 'instagram']) }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == 'instagram' ? 'bg-pink-50 text-pink-700' : 'text-slate-600 hover:bg-slate-50' }}">IG Followers</a>
-        <a href="{{ route('admin.metrics.index', ['type' => 'tiktok']) }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == 'tiktok' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">TikTok Views</a>
+        <a href="{{ route('admin.metrics.index', ['type' => 'tiktok']) }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == 'tiktok' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">TikTok Followers</a>
         <a href="{{ route('admin.metrics.index', ['type' => 'instagram_live']) }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == 'instagram_live' ? 'bg-pink-50 text-pink-700' : 'text-slate-600 hover:bg-slate-50' }}">Live IG</a>
         <a href="{{ route('admin.metrics.index', ['type' => 'tiktok_live']) }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request('type') == 'tiktok_live' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-slate-50' }}">Live TikTok</a>
     </div>

@@ -10,11 +10,11 @@ class Member extends Model
 
     public function period() { return $this->belongsTo(Period::class); }
     public function division() { return $this->belongsTo(Division::class); }
-    public function events() { return $this->belongsToMany(Event::class)->withPivot('division_id')->withTimestamps(); }
-    public function news() { return $this->belongsToMany(News::class, 'news_member')->withTimestamps(); }
+    public function events() { return $this->belongsToMany(Event::class)->withPivot('division_id', 'role')->withTimestamps(); }
+    public function works() { return $this->belongsToMany(Work::class, 'member_work')->withTimestamps(); }
 
     public function getTotalEventsAttribute() { return $this->events()->count(); }
-    public function getTotalWorksAttribute() { return $this->news()->count(); }
+    public function getTotalWorksAttribute() { return $this->works()->count(); }
     public function getSlugAttribute() { return \Illuminate\Support\Str::slug($this->full_name); }
 
     protected static function booted()

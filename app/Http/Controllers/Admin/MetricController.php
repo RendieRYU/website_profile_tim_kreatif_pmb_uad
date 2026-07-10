@@ -47,6 +47,34 @@ class MetricController extends Controller
 
         $validated['period_id'] = $activePeriod->id;
 
+        if ($validated['type'] === 'registrant') {
+            $higherBefore = Metric::where('period_id', $activePeriod->id)
+                ->where('type', 'registrant')
+                ->where('date', '<=', $validated['date'])
+                ->where('value', '>', $validated['value'])
+                ->orderBy('date', 'desc')
+                ->first();
+                
+            if ($higherBefore) {
+                return redirect()->back()->withInput()->withErrors([
+                    'value' => 'Jumlah pendaftar tidak boleh kurang dari data sebelumnya tanggal ' . $higherBefore->date->format('d M Y') . ' (' . $higherBefore->value . ').'
+                ]);
+            }
+
+            $lowerAfter = Metric::where('period_id', $activePeriod->id)
+                ->where('type', 'registrant')
+                ->where('date', '>=', $validated['date'])
+                ->where('value', '<', $validated['value'])
+                ->orderBy('date', 'asc')
+                ->first();
+
+            if ($lowerAfter) {
+                return redirect()->back()->withInput()->withErrors([
+                    'value' => 'Jumlah pendaftar tidak boleh lebih dari data setelahnya tanggal ' . $lowerAfter->date->format('d M Y') . ' (' . $lowerAfter->value . ').'
+                ]);
+            }
+        }
+
         Metric::create($validated);
 
         return redirect()->route('admin.metrics.index')->with('success', 'Statistik berhasil ditambahkan.');

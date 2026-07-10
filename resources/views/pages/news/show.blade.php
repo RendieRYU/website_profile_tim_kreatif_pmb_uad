@@ -20,24 +20,7 @@
             {!! $news->content !!}
         </div>
 
-        @if($news->members->count() > 0)
-        <div class="mt-12 pt-8 border-t border-slate-100">
-            <h3 class="text-xl font-bold text-slate-800 mb-6">Kreator Terlibat</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                @foreach($news->members as $member)
-                <a href="{{ route('portfolio.show', ['q' => $member->full_name]) }}" class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl hover:bg-blue-50 transition-colors border border-slate-100">
-                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-                        {{ substr($member->full_name, 0, 1) }}
-                    </div>
-                    <div>
-                        <div class="font-bold text-slate-800">{{ $member->full_name }}</div>
-                        <div class="text-xs text-slate-500">{{ $member->division->name ?? 'Tim Kreatif' }}</div>
-                    </div>
-                </a>
-                @endforeach
-            </div>
-        </div>
-        @endif
+
 
     </div>
 </div>

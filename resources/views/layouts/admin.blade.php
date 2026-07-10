@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Tim Kreatif PMB UAD</title>
+    <!-- Favicon -->
+    @if(\App\Models\Setting::get('site_logo'))
+        <link rel="icon" href="{{ asset('storage/' . \App\Models\Setting::get('site_logo')) }}">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}">
+    @endif
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
@@ -31,6 +39,7 @@
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-home w-5"></i> Dashboard
             </a>
+            @if(auth()->user()->role === 'admin')
             <a href="{{ route('admin.divisions.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.divisions.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-layer-group w-5"></i> Divisi
             </a>
@@ -47,14 +56,24 @@
                 <i class="fas fa-tags w-5"></i> Kategori Kegiatan
             </a>
             <a href="{{ route('admin.news.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.news.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
-                <i class="fas fa-newspaper w-5"></i> Berita/Portofolio
+                <i class="fas fa-newspaper w-5"></i> Berita
             </a>
+            @endif
+
+            @if(auth()->user()->role === 'anggota')
+            <a href="{{ route('admin.works.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.works.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
+                <i class="fas fa-briefcase w-5"></i> Karya / Portofolio
+            </a>
+            @endif
+
+            @if(auth()->user()->role === 'admin')
             <a href="{{ route('admin.metrics.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.metrics.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-chart-line w-5"></i> Statistik & Metrik
             </a>
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-cog w-5"></i> Pengaturan
             </a>
+            @endif
         </nav>
         <div class="p-4 border-t border-slate-700">
             <a href="{{ route('admin.account.edit') }}" class="flex items-center gap-3 px-4 py-2 text-slate-300 hover:text-white transition-colors">
@@ -108,5 +127,39 @@
     </div>
 
     @stack('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // SweetAlert2 Delete Confirmation
+            const deleteForms = document.querySelectorAll('form[onsubmit*="return confirm"]');
+            deleteForms.forEach(form => {
+                const originalOnsubmit = form.getAttribute('onsubmit');
+                // Extract message from confirm('...') if possible
+                let message = "Data ini tidak bisa dikembalikan!";
+                const match = originalOnsubmit.match(/confirm\(['"](.*?)['"]\)/);
+                if (match && match[1]) {
+                    message = match[1];
+                }
+                
+                form.removeAttribute('onsubmit');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Apakah Anda Yakin?',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444', // red-500
+                        cancelButtonColor: '#64748b', // slate-500
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -91,9 +91,28 @@ class DashboardController extends Controller
         $ttTotalLive = $rawMetrics->where('type', 'tiktok_live')->count();
         $ttTotalImpressions = $rawMetrics->where('type', 'tiktok_live')->sum('value');
 
+        $latestRegistrant = \App\Models\Metric::where('period_id', $activePeriod->id)
+            ->where('type', 'registrant')
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->first()?->value ?? ($settings['registrant_count'] ?? 0);
+
+        $latestInstagram = \App\Models\Metric::where('period_id', $activePeriod->id)
+            ->where('type', 'instagram')
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->first()?->value ?? 0;
+
+        $latestTiktok = \App\Models\Metric::where('period_id', $activePeriod->id)
+            ->where('type', 'tiktok')
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->first()?->value ?? 0;
+
         return view('pages.dashboard', compact(
             'settings', 'members', 'latestNews', 'divisions', 'divisionEventCounts', 'chartData',
-            'igTotalLive', 'igTotalImpressions', 'ttTotalLive', 'ttTotalImpressions'
+            'igTotalLive', 'igTotalImpressions', 'ttTotalLive', 'ttTotalImpressions',
+            'latestRegistrant', 'latestInstagram', 'latestTiktok'
         ));
     }
 }

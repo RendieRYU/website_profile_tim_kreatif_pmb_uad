@@ -78,16 +78,19 @@
     </div>
 
     <div class="section">
-        <h2>Karya / Publikasi</h2>
-        @if($member->news->count() > 0)
-            @foreach($member->news as $news)
+        <h2>Hasil Karya</h2>
+        @if($member->works->count() > 0)
+            @foreach($member->works as $work)
                 <div class="item">
-                    <div class="item-title">{{ $news->title }}</div>
-                    <div class="item-date">{{ $news->published_date->format('d F Y') }}</div>
+                    <div class="item-title">{{ $work->title }} ({{ $work->work_type }})</div>
+                    <div class="item-date">{{ $work->work_date->format('d F Y') }}</div>
+                    @if($work->link)
+                        <div style="font-size: 12px; margin-top: 2px;"><a href="{{ $work->link }}">{{ $work->link }}</a></div>
+                    @endif
                 </div>
             @endforeach
         @else
-            <p>Belum ada karya yang dipublikasikan.</p>
+            <p>Belum ada karya yang diunggah.</p>
         @endif
     </div>
 

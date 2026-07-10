@@ -29,14 +29,14 @@ class PortfolioController extends Controller
         }
 
         // Load relations
-        $member->load(['events', 'news', 'division']);
+        $member->load(['events', 'works', 'division']);
 
         return view('pages.portfolio.show', compact('member'));
     }
 
     public function exportPdf($id)
     {
-        $member = Member::with(['events', 'news', 'division'])->findOrFail($id);
+        $member = Member::with(['events', 'works', 'division'])->findOrFail($id);
 
         $pdf = Pdf::loadView('pages.portfolio.pdf', compact('member'));
         return $pdf->download('portofolio-' . \Illuminate\Support\Str::slug($member->full_name) . '.pdf');
