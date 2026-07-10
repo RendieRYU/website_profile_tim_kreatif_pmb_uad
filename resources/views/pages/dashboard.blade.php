@@ -2,7 +2,7 @@
 
 @section('content')
 
-<section class="relative min-h-[25vh] md:min-h-[75vh] flex items-center justify-center text-white py-16 md:py-28 overflow-hidden bg-cover bg-[center_30%]"
+<section class="relative w-full aspect-video flex items-center justify-center text-white overflow-hidden bg-cover bg-[center_30%]"
          style="background-image: url('{{ isset($settings['team_photo']) && $settings['team_photo'] ? asset('storage/'.$settings['team_photo']) : '' }}');">
     <!-- Dark overlay to ensure text readability -->
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-[1px]"></div>
