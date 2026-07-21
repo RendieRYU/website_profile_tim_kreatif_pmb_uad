@@ -43,9 +43,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('periods', Admin\PeriodController::class);
         Route::resource('divisions', Admin\DivisionController::class);
         Route::resource('categories', Admin\CategoryController::class);
+        Route::get('/events/export', [Admin\EventController::class, 'export'])->name('events.export');
         Route::resource('events', Admin\EventController::class);
         Route::resource('news', Admin\NewsController::class);
         Route::resource('metrics', Admin\MetricController::class)->except(['show', 'edit', 'update']);
+        Route::get('/instagram-posts/export', [Admin\InstagramPostController::class, 'export'])->name('instagram-posts.export');
+        Route::resource('instagram-posts', Admin\InstagramPostController::class);
+        Route::get('/tiktok-posts/export', [Admin\TiktokPostController::class, 'export'])->name('tiktok-posts.export');
+        Route::resource('tiktok-posts', Admin\TiktokPostController::class);
+        Route::resource('admission-leaders', Admin\AdmissionLeaderController::class);
         Route::get('/settings', [Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [Admin\SettingController::class, 'update'])->name('settings.update');
     });

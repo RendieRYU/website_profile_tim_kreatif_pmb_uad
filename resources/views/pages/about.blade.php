@@ -9,6 +9,36 @@
             <p class="mt-4 text-slate-600 text-lg max-w-3xl mx-auto">Kami adalah tim yang berdedikasi untuk memperkenalkan dan mempromosikan Universitas Ahmad Dahlan melalui berbagai media kreatif.</p>
         </div>
 
+        <!-- Section Jajaran Pimpinan Admisi -->
+        @if($leaders->count() > 0)
+        <div class="mb-16" data-aos="fade-up">
+            <h2 class="text-2xl font-bold text-slate-800 text-center mb-1">Jajaran Pimpinan Admisi</h2>
+            <p class="text-slate-500 text-center mb-8 text-sm">Pimpinan Admisi Penerimaan Mahasiswa Baru Universitas Ahmad Dahlan</p>
+            <div class="flex flex-wrap justify-center gap-8">
+                @foreach($leaders as $leader)
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-2 group w-64">
+                    <div class="aspect-[3/4] bg-slate-200 overflow-hidden relative">
+                        @if($leader->photo)
+                            <img src="{{ asset('storage/'.$leader->photo) }}" alt="{{ $leader->name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
+                                <i class="fas fa-user-tie text-5xl"></i>
+                            </div>
+                        @endif
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="p-6 text-center">
+                        <h3 class="text-lg font-bold text-slate-800 mb-1 line-clamp-1">{{ $leader->name }}</h3>
+                        <p class="text-blue-600 font-medium text-sm mt-1">{{ $leader->position }}</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            
+            <div class="w-24 h-0.5 bg-slate-200 mx-auto mt-16"></div>
+        </div>
+        @endif
+
         @if($periods->count() > 0)
         <div x-data="{ activePeriod: {{ $periods->first()->id }} }">
             <!-- Period Tabs -->
@@ -35,7 +65,7 @@
                     
                     @forelse($period->members as $member)
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-2 group">
-                        <div class="aspect-w-3 aspect-h-4 bg-slate-200 overflow-hidden relative">
+                        <div class="aspect-[3/4] bg-slate-200 overflow-hidden relative">
                             @if($member->photo)
                                 <img src="{{ asset('storage/'.$member->photo) }}" alt="{{ $member->full_name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
                             @else

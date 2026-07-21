@@ -49,9 +49,15 @@
         $photoBase64 = null;
         if ($member->photo && file_exists(public_path('storage/' . $member->photo))) {
             $photoPath = public_path('storage/' . $member->photo);
-            $type = pathinfo($photoPath, PATHINFO_EXTENSION);
-            $data = file_get_contents($photoPath);
-            $photoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            $type = strtolower(pathinfo($photoPath, PATHINFO_EXTENSION));
+            // Dompdf requires the GD extension to render PNG images.
+            // If GD is not loaded, we do not attempt to load/render PNG images to prevent crashes.
+            if ($type !== 'png' || extension_loaded('gd')) {
+                $data = @file_get_contents($photoPath);
+                if ($data) {
+                    $photoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                }
+            }
         }
     @endphp
 

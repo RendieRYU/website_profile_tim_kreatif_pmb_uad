@@ -28,11 +28,21 @@ class DashboardController extends Controller
             ->groupBy('division_id')
             ->pluck('total', 'division_id');
 
+        $divisionEvents = \App\Models\Event::where('events.period_id', $activePeriod->id)
+            ->join('event_member', 'events.id', '=', 'event_member.event_id')
+            ->select('events.id', 'events.title', 'events.event_date', 'events.status', 'event_member.division_id')
+            ->distinct()
+            ->orderBy('events.event_date', 'desc')
+            ->get()
+            ->groupBy('division_id');
+
         $chartData = [
             'labels' => [],
             'registrant' => [],
             'instagram' => [],
-            'tiktok' => []
+            'tiktok' => [],
+            'instagram_impressions' => [],
+            'tiktok_impressions' => []
         ];
         
         // Periode PMB: Oktober tahun sebelumnya s/d September tahun periode
@@ -67,6 +77,9 @@ class DashboardController extends Controller
             $monthLabel = \Carbon\Carbon::createFromFormat('Y-m-d', $ym . '-01')->translatedFormat('M Y');
             $chartData['labels'][] = $monthLabel;
             
+            $igImpressions = 0;
+            $ttImpressions = 0;
+
             if ($groupedMetrics->has($ym)) {
                 $items = $groupedMetrics->get($ym);
                 
@@ -78,11 +91,16 @@ class DashboardController extends Controller
 
                 $tt = $items->where('type', 'tiktok')->sortByDesc('date')->first();
                 $lastTt = $tt ? $tt->value : $lastTt;
+
+                $igImpressions = $items->where('type', 'instagram_live')->sum('value');
+                $ttImpressions = $items->where('type', 'tiktok_live')->sum('value');
             }
             
             $chartData['registrant'][] = $lastReg;
             $chartData['instagram'][] = $lastIg;
             $chartData['tiktok'][] = $lastTt;
+            $chartData['instagram_impressions'][] = $igImpressions;
+            $chartData['tiktok_impressions'][] = $ttImpressions;
         }
 
         $igTotalLive = $rawMetrics->where('type', 'instagram_live')->count();
@@ -109,10 +127,128 @@ class DashboardController extends Controller
             ->orderByDesc('id')
             ->first()?->value ?? 0;
 
+        // Fetch and process Instagram Post data for sorting and charts
+        $rawInstagramPosts = \App\Models\InstagramPost::where('period_id', $activePeriod->id)->orderBy('tanggal_posting')->get();
+        
+        $instagramMonthly = [];
+        $instagramDaily = [];
+        $yearlyLabels = [];
+        $yearlyPosts = [];
+        $yearlyFollowers = [];
+
+        foreach($periodMonths as $ym) {
+            $monthObj = \Carbon\Carbon::createFromFormat('Y-m-d', $ym . '-01');
+            $monthLabel = $monthObj->translatedFormat('M Y');
+            $yearlyLabels[] = $monthLabel;
+
+            $monthPosts = $rawInstagramPosts->filter(function($post) use ($ym) {
+                return $post->tanggal_posting->format('Y-m') === $ym;
+            });
+
+            $totalPosts = $monthPosts->count();
+            $newFollowers = $monthPosts->sum('new_followers');
+
+            $yearlyPosts[] = $totalPosts;
+            $yearlyFollowers[] = $newFollowers;
+
+            $instagramMonthly[$ym] = [
+                'total_posts' => $totalPosts,
+                'new_followers' => $newFollowers,
+                'label' => $monthObj->translatedFormat('F Y')
+            ];
+
+            // Generate daily labels and metrics
+            $daysInMonth = $monthObj->daysInMonth;
+            $dailyLabels = [];
+            $dailyPostCounts = [];
+            $dailyFollowerCounts = [];
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $dateStr = sprintf('%s-%02d', $ym, $d);
+                $dailyLabels[] = $d . ' ' . $monthObj->translatedFormat('M');
+
+                $dayPosts = $monthPosts->filter(function($post) use ($dateStr) {
+                    return $post->tanggal_posting->format('Y-m-d') === $dateStr;
+                });
+
+                $dailyPostCounts[] = $dayPosts->count();
+                $dailyFollowerCounts[] = $dayPosts->sum('new_followers');
+            }
+
+            $instagramDaily[$ym] = [
+                'labels' => $dailyLabels,
+                'posts' => $dailyPostCounts,
+                'followers' => $dailyFollowerCounts
+            ];
+        }
+
+        // Hitung total keseluruhan untuk penayangan 'Seluruh Bulan'
+        $grandTotalPosts = $rawInstagramPosts->count();
+        $grandTotalNewFollowers = $rawInstagramPosts->sum('new_followers');
+
+        // Fetch and process TikTok Post data for sorting and charts
+        $rawTiktokPosts = \App\Models\TiktokPost::where('period_id', $activePeriod->id)->orderBy('tanggal_posting')->get();
+        
+        $tiktokMonthly = [];
+        $tiktokDaily = [];
+        $tiktokYearlyPosts = [];
+        $tiktokYearlyFollowers = [];
+
+        foreach($periodMonths as $ym) {
+            $monthObj = \Carbon\Carbon::createFromFormat('Y-m-d', $ym . '-01');
+
+            $monthPosts = $rawTiktokPosts->filter(function($post) use ($ym) {
+                return $post->tanggal_posting->format('Y-m') === $ym;
+            });
+
+            $totalPosts = $monthPosts->count();
+            $newFollowers = $monthPosts->sum('new_followers');
+
+            $tiktokYearlyPosts[] = $totalPosts;
+            $tiktokYearlyFollowers[] = $newFollowers;
+
+            $tiktokMonthly[$ym] = [
+                'total_posts' => $totalPosts,
+                'new_followers' => $newFollowers,
+                'label' => $monthObj->translatedFormat('F Y')
+            ];
+
+            // Generate daily labels and metrics
+            $daysInMonth = $monthObj->daysInMonth;
+            $dailyLabels = [];
+            $dailyPostCounts = [];
+            $dailyFollowerCounts = [];
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $dateStr = sprintf('%s-%02d', $ym, $d);
+                $dailyLabels[] = $d . ' ' . $monthObj->translatedFormat('M');
+
+                $dayPosts = $monthPosts->filter(function($post) use ($dateStr) {
+                    return $post->tanggal_posting->format('Y-m-d') === $dateStr;
+                });
+
+                $dailyPostCounts[] = $dayPosts->count();
+                $dailyFollowerCounts[] = $dayPosts->sum('new_followers');
+            }
+
+            $tiktokDaily[$ym] = [
+                'labels' => $dailyLabels,
+                'posts' => $dailyPostCounts,
+                'followers' => $dailyFollowerCounts
+            ];
+        }
+
+        $tiktokGrandTotalPosts = $rawTiktokPosts->count();
+        $tiktokGrandTotalNewFollowers = $rawTiktokPosts->sum('new_followers');
+
         return view('pages.dashboard', compact(
-            'settings', 'members', 'latestNews', 'divisions', 'divisionEventCounts', 'chartData',
+            'settings', 'members', 'latestNews', 'divisions', 'divisionEventCounts', 'divisionEvents', 'chartData',
             'igTotalLive', 'igTotalImpressions', 'ttTotalLive', 'ttTotalImpressions',
-            'latestRegistrant', 'latestInstagram', 'latestTiktok'
+            'latestRegistrant', 'latestInstagram', 'latestTiktok',
+            'instagramMonthly', 'instagramDaily', 'yearlyLabels', 'yearlyPosts', 'yearlyFollowers',
+            'grandTotalPosts', 'grandTotalNewFollowers',
+            'tiktokMonthly', 'tiktokDaily', 'tiktokYearlyPosts', 'tiktokYearlyFollowers',
+            'tiktokGrandTotalPosts', 'tiktokGrandTotalNewFollowers'
         ));
     }
 }

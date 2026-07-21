@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 <div class="mb-6 flex items-center gap-4">
-    <a href="{{ route('admin.metrics.index') }}" class="text-slate-400 hover:text-blue-600 transition-colors">
+    <a href="{{ route('admin.metrics.index', ['type' => request('type')]) }}" class="text-slate-400 hover:text-blue-600 transition-colors">
         <i class="fas fa-arrow-left text-xl"></i>
     </a>
     <h1 class="text-3xl font-bold text-slate-800">Tambah Data Statistik</h1>
@@ -14,11 +14,11 @@
         <div class="mb-4">
             <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Statistik</label>
             <select name="type" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
-                <option value="registrant">Pendaftar UAD</option>
-                <option value="instagram">Followers/Engagement Instagram</option>
-                <option value="tiktok">Followers TikTok</option>
-                <option value="instagram_live">Live Instagram (Penonton)</option>
-                <option value="tiktok_live">Live TikTok (Penonton)</option>
+                <option value="registrant" {{ request('type') === 'registrant' ? 'selected' : '' }}>Pendaftar UAD</option>
+                <option value="instagram" {{ request('type') === 'instagram' ? 'selected' : '' }}>Followers/Engagement Instagram</option>
+                <option value="tiktok" {{ request('type') === 'tiktok' ? 'selected' : '' }}>Followers TikTok</option>
+                <option value="instagram_live" {{ request('type') === 'instagram_live' ? 'selected' : '' }}>Live Instagram (Penonton)</option>
+                <option value="tiktok_live" {{ request('type') === 'tiktok_live' ? 'selected' : '' }}>Live TikTok (Penonton)</option>
             </select>
             @error('type') <p class="text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
         </div>

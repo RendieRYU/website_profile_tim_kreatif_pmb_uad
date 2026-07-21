@@ -11,6 +11,7 @@ class AboutController extends Controller
     public function index()
     {
         $periods = \App\Models\Period::with(['members.division'])->orderByDesc('name')->get();
-        return view('pages.about', compact('periods'));
+        $leaders = \App\Models\AdmissionLeader::orderBy('order')->get();
+        return view('pages.about', compact('periods', 'leaders'));
     }
 }

@@ -3,13 +3,13 @@
 @section('content')
 
 <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-8" x-data="calendarData()">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 class="text-3xl font-bold text-slate-800">Kalender Kegiatan</h1>
         
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
             <div class="flex bg-white rounded-lg shadow-sm p-1 border border-slate-200">
                 <button @click="changeMonth(-1)" class="px-3 py-1 text-slate-600 hover:bg-slate-100 rounded transition-colors"><i class="fas fa-chevron-left"></i></button>
-                <div class="px-4 py-1 font-semibold text-slate-800" x-text="monthName + ' ' + currentYear"></div>
+                <div class="px-4 py-1 font-semibold text-slate-800 min-w-[120px] text-center" x-text="monthName + ' ' + currentYear"></div>
                 <button @click="changeMonth(1)" class="px-3 py-1 text-slate-600 hover:bg-slate-100 rounded transition-colors"><i class="fas fa-chevron-right"></i></button>
             </div>
             <button @click="resetToToday()" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors shadow-sm font-medium">Hari Ini</button>
@@ -20,24 +20,30 @@
         <!-- Calendar Header -->
         <div class="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
             <template x-for="day in ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']">
-                <div class="py-3 text-center text-sm font-medium text-slate-400" x-text="day"></div>
+                <div class="py-3 text-center text-xs md:text-sm font-semibold text-slate-500" x-text="day"></div>
             </template>
         </div>
         
         <!-- Calendar Grid -->
-        <div class="grid grid-cols-7 auto-rows-[minmax(120px,auto)] bg-slate-200 gap-[1px]">
+        <div class="grid grid-cols-7 auto-rows-[minmax(55px,auto)] md:auto-rows-[minmax(120px,auto)] bg-slate-200 gap-[1px]">
             <template x-for="(day, index) in calendarDays" :key="index">
-                <div class="min-h-[120px] bg-white p-2 relative group transition-colors hover:bg-slate-50" :class="{'opacity-40 bg-slate-50': !day.isCurrentMonth, 'bg-blue-50/50': day.isToday}">
+                <div class="min-h-[55px] md:min-h-[120px] bg-white p-1.5 md:p-2 relative group transition-all cursor-pointer md:cursor-default hover:bg-slate-50/80" 
+                     @click="selectDay(day)"
+                     :class="{
+                         'opacity-40 bg-slate-50/50': !day.isCurrentMonth, 
+                         'bg-blue-50/50': day.isToday,
+                         'ring-2 ring-blue-600 ring-inset bg-blue-50/20 z-10': selectedDate && selectedDate.date === day.date && day.isCurrentMonth
+                     }">
                     <!-- Date Number -->
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full" 
-                              :class="day.isToday ? 'bg-blue-600 text-white' : 'text-slate-400'" x-text="day.date"></span>
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-xs md:text-sm font-semibold w-6 h-6 md:w-7 md:h-7 flex items-center justify-center rounded-full" 
+                              :class="day.isToday ? 'bg-blue-600 text-white shadow-sm' : (selectedDate && selectedDate.date === day.date && day.isCurrentMonth ? 'text-blue-600 font-bold' : 'text-slate-400')" x-text="day.date"></span>
                     </div>
 
-                    <!-- Events -->
-                    <div class="space-y-1.5 overflow-y-auto max-h-[250px] pr-1 custom-scrollbar">
+                    <!-- Events (Desktop Only) -->
+                    <div class="hidden md:block space-y-1.5 overflow-y-auto max-h-[250px] pr-1 custom-scrollbar">
                         <template x-for="event in day.events" :key="event.id">
-                            <div @click="openModal(event)" class="bg-white border border-slate-200 p-2 rounded-md cursor-pointer hover:border-blue-400 hover:shadow transition-all shadow-sm group/event">
+                            <div @click.stop="openModal(event)" class="bg-white border border-slate-200 p-2 rounded-md cursor-pointer hover:border-blue-400 hover:shadow transition-all shadow-sm group/event">
                                 <div class="flex justify-between items-start mb-1">
                                     <div class="text-sm font-semibold text-slate-800 truncate pr-2" x-text="event.title"></div>
                                     <div class="text-xs text-slate-500 font-mono" x-text="event.formatted_time"></div>
@@ -71,6 +77,60 @@
                             </div>
                         </template>
                     </div>
+
+                    <!-- Events Indicator Dots (Mobile Only) -->
+                    <div class="flex md:hidden justify-center flex-wrap gap-0.5 mt-0.5 overflow-hidden max-h-5">
+                        <template x-for="event in day.events" :key="event.id">
+                            <span class="w-1.5 h-1.5 rounded-full border border-white" 
+                                  :class="{
+                                      'bg-green-500': event.status === 'selesai',
+                                      'bg-yellow-500': event.status === 'ide',
+                                      'bg-red-500': event.status === 'ditunda',
+                                      'bg-blue-500': event.status === 'acc',
+                                      'bg-purple-500': event.status === 'terjadwal'
+                                  }"></span>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Agenda Event List (Mobile Only) -->
+    <div class="md:hidden mt-4 bg-white rounded-xl shadow-sm border border-slate-200 p-4" x-show="selectedDate">
+        <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="far fa-calendar-alt text-blue-600"></i>
+            <span>Kegiatan:</span>
+            <span class="text-blue-600" x-text="selectedDate ? selectedDate.date + ' ' + monthName + ' ' + currentYear : ''"></span>
+        </h3>
+        
+        <div class="space-y-2.5">
+            <template x-for="event in (selectedDate ? selectedDate.events : [])" :key="event.id">
+                <div @click="openModal(event)" class="border border-slate-100 bg-slate-50 hover:bg-blue-50/20 active:bg-blue-50/40 p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center shadow-xs">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-slate-800 text-sm truncate" x-text="event.title"></div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-2.5 h-2.5 rounded-full" 
+                                :class="{
+                                    'bg-green-500': event.status === 'selesai',
+                                    'bg-yellow-500': event.status === 'ide',
+                                    'bg-red-500': event.status === 'ditunda',
+                                    'bg-blue-500': event.status === 'acc',
+                                    'bg-purple-500': event.status === 'terjadwal'
+                                }"></span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider" x-text="event.status"></span>
+                            <span class="text-slate-300 text-xs">|</span>
+                            <span class="text-[10px] text-slate-500 font-mono" x-text="event.formatted_time || 'Seharian'"></span>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-slate-300 text-xs ml-2"></i>
+                </div>
+            </template>
+            
+            <template x-if="!selectedDate || selectedDate.events.length === 0">
+                <div class="text-center py-6 text-slate-400 italic text-sm">
+                    <i class="fas fa-calendar-times text-xl mb-1.5 block"></i>
+                    Tidak ada kegiatan pada tanggal ini.
                 </div>
             </template>
         </div>
@@ -200,6 +260,7 @@
             calendarDays: [],
             isLoading: false,
             selectedEvent: null,
+            selectedDate: null,
             monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
             
             get monthName() {
@@ -289,6 +350,20 @@
                         events: []
                     });
                 }
+
+                // Auto select today or first day
+                let todayDay = this.calendarDays.find(d => d.isToday && d.isCurrentMonth);
+                if (todayDay) {
+                    this.selectedDate = todayDay;
+                } else {
+                    let firstDayOfMonth = this.calendarDays.find(d => d.date === 1 && d.isCurrentMonth);
+                    this.selectedDate = firstDayOfMonth || null;
+                }
+            },
+
+            selectDay(day) {
+                if (!day.isCurrentMonth) return;
+                this.selectedDate = day;
             },
 
             openModal(event) {

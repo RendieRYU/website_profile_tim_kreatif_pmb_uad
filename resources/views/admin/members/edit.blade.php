@@ -149,7 +149,7 @@
                     imageSmoothingQuality: 'high',
                 });
                 
-                const base64Data = canvas.toDataURL('image/png');
+                const base64Data = canvas.toDataURL('image/jpeg', 0.9);
                 
                 previewImage.src = base64Data;
                 previewContainer.classList.remove('hidden');

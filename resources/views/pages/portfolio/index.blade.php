@@ -42,7 +42,7 @@
                     
                     @forelse($period->members as $member)
                     <a href="{{ route('portfolio.show', $member->slug) }}" class="block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-2 group">
-                        <div class="aspect-w-3 aspect-h-4 bg-slate-200 overflow-hidden relative">
+                        <div class="aspect-[3/4] bg-slate-200 overflow-hidden relative">
                             @if($member->photo)
                                 <img src="{{ asset('storage/'.$member->photo) }}" alt="{{ $member->full_name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
                             @else

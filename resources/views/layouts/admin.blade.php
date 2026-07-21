@@ -25,13 +25,26 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased flex">
+<body class="bg-slate-100 text-slate-800 antialiased flex" x-data="{ sidebarOpen: false }">
+
+    <!-- Sidebar Backdrop Overlay -->
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-20 md:hidden"
+         x-show="sidebarOpen"
+         @click="sidebarOpen = false"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+    </div>
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900 text-white min-h-screen flex flex-col fixed md:relative z-20 transition-transform transform -translate-x-full md:translate-x-0" id="sidebar" x-data="{ open: true }" :class="{'translate-x-0': open}">
+    <aside class="w-64 bg-slate-900 text-white h-screen flex flex-col fixed md:sticky md:top-0 z-30 overflow-y-auto transition-transform duration-300 transform md:translate-x-0" id="sidebar" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="p-6 flex items-center justify-between">
-            <span class="text-xl font-bold tracking-tight text-white">TK Admin</span>
-            <button class="md:hidden text-slate-400 hover:text-white" @click="document.getElementById('sidebar').classList.toggle('-translate-x-full')">
+            <span class="text-xl font-bold tracking-tight text-white">Tim Kreatif Admin</span>
+            <button class="md:hidden text-slate-400 hover:text-white text-lg" @click="sidebarOpen = false">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -48,6 +61,9 @@
             </a>
             <a href="{{ route('admin.members.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.members.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-users w-5"></i> Anggota
+            </a>
+            <a href="{{ route('admin.admission-leaders.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.admission-leaders.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
+                <i class="fas fa-user-tie w-5"></i> Pimpinan Admisi
             </a>
             <a href="{{ route('admin.events.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-calendar-check w-5"></i> Kegiatan
@@ -70,6 +86,12 @@
             <a href="{{ route('admin.metrics.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.metrics.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-chart-line w-5"></i> Statistik & Metrik
             </a>
+            <a href="{{ route('admin.instagram-posts.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.instagram-posts.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
+                <i class="fab fa-instagram w-5 text-pink-500"></i> Laporan Instagram
+            </a>
+            <a href="{{ route('admin.tiktok-posts.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.tiktok-posts.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
+                <i class="fab fa-tiktok w-5 text-slate-100"></i> Laporan TikTok
+            </a>
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white' : 'text-slate-300' }}">
                 <i class="fas fa-cog w-5"></i> Pengaturan
             </a>
@@ -89,11 +111,11 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col min-h-screen relative w-full md:w-auto">
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen relative w-full overflow-x-hidden md:w-auto">
         <!-- Top Navbar for Mobile -->
         <header class="bg-white shadow-sm md:hidden p-4 flex justify-between items-center z-10">
             <div class="flex items-center gap-2">
-                <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')" class="text-slate-600 hover:text-blue-600 focus:outline-none text-2xl">
+                <button @click="sidebarOpen = !sidebarOpen" class="text-slate-600 hover:text-blue-600 focus:outline-none text-2xl">
                     <i class="fas fa-bars"></i>
                 </button>
                 <span class="font-bold text-lg text-slate-800">Admin Panel</span>
@@ -101,7 +123,7 @@
         </header>
 
         <!-- Content Area -->
-        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto min-w-0">
             @if(session('success'))
             <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded shadow-sm flex items-start gap-3" x-data="{ show: true }" x-show="show">
                 <i class="fas fa-check-circle text-green-500 mt-1"></i>

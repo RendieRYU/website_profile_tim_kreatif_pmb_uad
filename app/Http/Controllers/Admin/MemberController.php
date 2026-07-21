@@ -13,7 +13,20 @@ class MemberController extends Controller
         if (!$activePeriod) {
             return redirect()->route('admin.dashboard')->with('error', 'Belum ada periode yang aktif.');
         }
-        $members = Member::with(['period', 'division'])->where('period_id', $activePeriod->id)->latest()->paginate(10);
+        
+        $query = Member::with(['period', 'division'])->where('period_id', $activePeriod->id);
+        
+        $sort = request('sort', 'name');
+        if ($sort === 'division') {
+            $members = $query->leftJoin('divisions', 'members.division_id', '=', 'divisions.id')
+                ->orderBy('divisions.name', 'asc')
+                ->orderBy('full_name', 'asc')
+                ->select('members.*')
+                ->get();
+        } else {
+            $members = $query->orderBy('full_name', 'asc')->get();
+        }
+        
         return view('admin.members.index', compact('members')); 
     }
     public function create() { 
@@ -32,7 +45,7 @@ class MemberController extends Controller
             $image_parts = explode(";base64,", $request->cropped_photo);
             if (count($image_parts) == 2) {
                 $image_base64 = base64_decode($image_parts[1]);
-                $fileName = 'members/' . \Illuminate\Support\Str::uuid() . '.png';
+                $fileName = 'members/' . \Illuminate\Support\Str::uuid() . '.jpg';
                 \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $image_base64);
                 $validated['photo'] = $fileName;
             }
@@ -58,7 +71,7 @@ class MemberController extends Controller
             $image_parts = explode(";base64,", $request->cropped_photo);
             if (count($image_parts) == 2) {
                 $image_base64 = base64_decode($image_parts[1]);
-                $fileName = 'members/' . \Illuminate\Support\Str::uuid() . '.png';
+                $fileName = 'members/' . \Illuminate\Support\Str::uuid() . '.jpg';
                 \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $image_base64);
                 $validated['photo'] = $fileName;
             }

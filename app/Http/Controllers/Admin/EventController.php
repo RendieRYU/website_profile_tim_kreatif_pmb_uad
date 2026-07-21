@@ -95,4 +95,23 @@ class EventController extends Controller
         $event->delete();
         return redirect()->route('admin.events.index')->with('success', 'Kegiatan berhasil dihapus.');
     }
+
+    public function export() {
+        $activePeriod = \App\Models\Period::where('is_active', true)->first();
+        if (!$activePeriod) {
+            return redirect()->back()->with('error', 'Belum ada periode aktif untuk ekspor.');
+        }
+
+        $events = Event::with(['categories', 'members'])->where('period_id', $activePeriod->id)->orderBy('event_date', 'asc')->get();
+
+        $filename = "Kalender_Kegiatan_{$activePeriod->name}.xls";
+
+        return response(view('admin.events.excel', compact('events'))->render(), 200, [
+            "Content-Type" => "application/vnd.ms-excel; charset=utf-8",
+            "Content-Disposition" => "attachment; filename=\"{$filename}\"",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ]);
+    }
 }
