@@ -6,19 +6,46 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
-    protected $fillable = ['period_id', 'title', 'description', 'event_date', 'event_time', 'external_link', 'link', 'status'];
-    protected function casts(): array { return ['event_date' => 'date', 'event_time' => 'datetime']; }
+    protected $fillable = ['period_id', 'title', 'description', 'event_date', 'event_time', 'external_link', 'link', 'links', 'status'];
+    protected function casts(): array { 
+        return [
+            'event_date' => 'date', 
+            'event_time' => 'datetime',
+            'links' => 'array'
+        ]; 
+    }
 
     protected static function booted()
     {
         static::saved(function ($event) {
-            if ($event->link && str_contains($event->link, 'instagram.com')) {
+            $allUrls = [];
+            if ($event->link) {
+                $allUrls[] = $event->link;
+            }
+            if (is_array($event->links)) {
+                foreach ($event->links as $l) {
+                    if (is_array($l) && !empty($l['url'])) {
+                        $allUrls[] = $l['url'];
+                    } elseif (is_string($l)) {
+                        $allUrls[] = $l;
+                    }
+                }
+            }
+
+            $igUrl = null;
+            $ttUrl = null;
+            foreach ($allUrls as $u) {
+                if (!$igUrl && str_contains($u, 'instagram.com')) $igUrl = $u;
+                if (!$ttUrl && str_contains($u, 'tiktok.com')) $ttUrl = $u;
+            }
+
+            if ($igUrl) {
                 \App\Models\InstagramPost::updateOrCreate(
                     ['event_id' => $event->id],
                     [
                         'period_id' => $event->period_id,
                         'tanggal_posting' => $event->event_date,
-                        'link_konten' => $event->link,
+                        'link_konten' => $igUrl,
                     ]
                 );
             } else {
@@ -28,13 +55,13 @@ class Event extends Model
                 }
             }
 
-            if ($event->link && str_contains($event->link, 'tiktok.com')) {
+            if ($ttUrl) {
                 \App\Models\TiktokPost::updateOrCreate(
                     ['event_id' => $event->id],
                     [
                         'period_id' => $event->period_id,
                         'tanggal_posting' => $event->event_date,
-                        'link_konten' => $event->link,
+                        'link_konten' => $ttUrl,
                     ]
                 );
             } else {

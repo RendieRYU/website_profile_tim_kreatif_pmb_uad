@@ -43,23 +43,33 @@
                     <!-- Events (Desktop Only) -->
                     <div class="hidden md:block space-y-1.5 overflow-y-auto max-h-[250px] pr-1 custom-scrollbar">
                         <template x-for="event in day.events" :key="event.id">
-                            <div @click.stop="openModal(event)" class="bg-white border border-slate-200 p-2 rounded-md cursor-pointer hover:border-blue-400 hover:shadow transition-all shadow-sm group/event">
+                            <div @click.stop="openModal(event)" 
+                                 :class="isKunjungan(event) 
+                                    ? 'bg-indigo-600 border border-indigo-700 text-white p-2 rounded-md cursor-pointer hover:bg-indigo-700 hover:shadow-md transition-all shadow-sm group/event' 
+                                    : 'bg-white border border-slate-200 p-2 rounded-md cursor-pointer hover:border-blue-400 hover:shadow transition-all shadow-sm group/event'">
                                 <div class="flex justify-between items-start mb-1">
-                                    <div class="text-sm font-semibold text-slate-800 truncate pr-2" x-text="event.title"></div>
-                                    <div class="text-xs text-slate-500 font-mono" x-text="event.formatted_time"></div>
+                                    <div class="text-sm font-semibold truncate pr-2" :class="isKunjungan(event) ? 'text-white' : 'text-slate-800'" x-text="event.title"></div>
+                                    <div class="text-xs font-mono" :class="isKunjungan(event) ? 'text-indigo-200' : 'text-slate-500'" x-text="event.formatted_time"></div>
                                 </div>
                                 
-                                <!-- Status Indicator -->
+                                <!-- Status / Kunjungan Badge -->
                                 <div class="flex items-center gap-1.5 mb-2">
-                                    <span class="w-2 h-2 rounded-full" 
-                                        :class="{
-                                            'bg-green-500': event.status === 'selesai',
-                                            'bg-yellow-500': event.status === 'ide',
-                                            'bg-red-500': event.status === 'ditunda',
-                                            'bg-blue-500': event.status === 'acc',
-                                            'bg-purple-500': event.status === 'terjadwal'
-                                        }"></span>
-                                    <span class="text-[10px] uppercase font-medium tracking-wider text-slate-400" x-text="event.status"></span>
+                                    <template x-if="isKunjungan(event)">
+                                        <span class="bg-indigo-800 text-indigo-100 text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase"><i class="fas fa-bus mr-1"></i> KUNJUNGAN</span>
+                                    </template>
+                                    <template x-if="!isKunjungan(event)">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full" 
+                                                :class="{
+                                                    'bg-green-500': event.status === 'selesai',
+                                                    'bg-yellow-500': event.status === 'ide',
+                                                    'bg-red-500': event.status === 'ditunda',
+                                                    'bg-blue-500': event.status === 'acc',
+                                                    'bg-purple-500': event.status === 'terjadwal'
+                                                }"></span>
+                                            <span class="text-[10px] uppercase font-medium tracking-wider text-slate-400" x-text="event.status"></span>
+                                        </div>
+                                    </template>
                                 </div>
 
                                 <!-- Tags -->
@@ -81,8 +91,8 @@
                     <!-- Events Indicator Dots (Mobile Only) -->
                     <div class="flex md:hidden justify-center flex-wrap gap-0.5 mt-0.5 overflow-hidden max-h-5">
                         <template x-for="event in day.events" :key="event.id">
-                            <span class="w-1.5 h-1.5 rounded-full border border-white" 
-                                  :class="{
+                            <span class="w-2 h-2 rounded-full border border-white" 
+                                  :class="isKunjungan(event) ? 'bg-indigo-600 ring-1 ring-indigo-400' : {
                                       'bg-green-500': event.status === 'selesai',
                                       'bg-yellow-500': event.status === 'ide',
                                       'bg-red-500': event.status === 'ditunda',
@@ -106,24 +116,34 @@
         
         <div class="space-y-2.5">
             <template x-for="event in (selectedDate ? selectedDate.events : [])" :key="event.id">
-                <div @click="openModal(event)" class="border border-slate-100 bg-slate-50 hover:bg-blue-50/20 active:bg-blue-50/40 p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center shadow-xs">
+                <div @click="openModal(event)" 
+                     :class="isKunjungan(event) 
+                        ? 'bg-indigo-600 text-white border-indigo-700 p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center shadow-sm' 
+                        : 'border border-slate-100 bg-slate-50 hover:bg-blue-50/20 active:bg-blue-50/40 p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center shadow-xs'">
                     <div class="flex-1 min-w-0">
-                        <div class="font-semibold text-slate-800 text-sm truncate" x-text="event.title"></div>
+                        <div class="font-semibold text-sm truncate" :class="isKunjungan(event) ? 'text-white' : 'text-slate-800'" x-text="event.title"></div>
                         <div class="flex items-center gap-2 mt-1">
-                            <span class="w-2.5 h-2.5 rounded-full" 
-                                :class="{
-                                    'bg-green-500': event.status === 'selesai',
-                                    'bg-yellow-500': event.status === 'ide',
-                                    'bg-red-500': event.status === 'ditunda',
-                                    'bg-blue-500': event.status === 'acc',
-                                    'bg-purple-500': event.status === 'terjadwal'
-                                }"></span>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider" x-text="event.status"></span>
-                            <span class="text-slate-300 text-xs">|</span>
-                            <span class="text-[10px] text-slate-500 font-mono" x-text="event.formatted_time || 'Seharian'"></span>
+                            <template x-if="isKunjungan(event)">
+                                <span class="bg-indigo-800 text-indigo-100 text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase"><i class="fas fa-bus mr-1"></i> KUNJUNGAN</span>
+                            </template>
+                            <template x-if="!isKunjungan(event)">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full" 
+                                        :class="{
+                                            'bg-green-500': event.status === 'selesai',
+                                            'bg-yellow-500': event.status === 'ide',
+                                            'bg-red-500': event.status === 'ditunda',
+                                            'bg-blue-500': event.status === 'acc',
+                                            'bg-purple-500': event.status === 'terjadwal'
+                                        }"></span>
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider" x-text="event.status"></span>
+                                </div>
+                            </template>
+                            <span :class="isKunjungan(event) ? 'text-indigo-300' : 'text-slate-300'" class="text-xs">|</span>
+                            <span class="text-[10px] font-mono" :class="isKunjungan(event) ? 'text-indigo-200' : 'text-slate-500'" x-text="event.formatted_time || 'Seharian'"></span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-right text-slate-300 text-xs ml-2"></i>
+                    <i class="fas fa-chevron-right text-xs ml-2" :class="isKunjungan(event) ? 'text-indigo-200' : 'text-slate-300'"></i>
                 </div>
             </template>
             
@@ -137,7 +157,7 @@
     </div>
 
     <!-- Event Detail Modal -->
-    <div x-show="selectedEvent" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0" style="display: none;">
+    <div x-show="selectedEvent" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0" style="display: none;" x-cloak>
         <div x-show="selectedEvent" x-transition.opacity class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal()"></div>
         
         <div x-show="selectedEvent" 
@@ -153,6 +173,10 @@
                 <button @click="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 transition-colors">
                     <i class="fas fa-times text-xl"></i>
                 </button>
+
+                <div class="flex items-center gap-2 mb-2" x-show="isKunjungan(selectedEvent)">
+                    <span class="px-2.5 py-0.5 bg-indigo-600 text-white font-bold text-xs rounded-full uppercase tracking-wider"><i class="fas fa-bus mr-1"></i> Kegiatan Kunjungan</span>
+                </div>
 
                 <h2 class="text-2xl font-bold text-slate-800 mb-6 pr-8" x-text="selectedEvent?.title"></h2>
 
@@ -219,16 +243,73 @@
                         <div class="text-slate-700 text-sm flex-1 whitespace-pre-wrap" x-text="selectedEvent?.description || '-'"></div>
                     </div>
 
-                    <div class="flex items-start gap-4" x-show="selectedEvent?.link">
+                    <!-- Multi-link Section -->
+                    <div class="flex items-start gap-4 pt-2 border-t border-slate-100">
                         <div class="w-24 text-slate-400 text-sm flex items-center gap-2 mt-1.5"><i class="fas fa-link w-4"></i> Tautan</div>
-                        <div>
-                            <a :href="selectedEvent?.link" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded transition-colors">
-                                <i class="fas fa-external-link-alt"></i> Buka Tautan
-                            </a>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <template x-for="(l, idx) in getEventLinks(selectedEvent)" :key="idx">
+                                    <a :href="l.url" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg transition-colors shadow-xs">
+                                        <i class="fas fa-external-link-alt"></i> <span x-text="l.title || 'Tautan'"></span>
+                                    </a>
+                                </template>
+                                <template x-if="getEventLinks(selectedEvent).length === 0">
+                                    <span class="text-sm text-slate-400 italic">Belum ada tautan</span>
+                                </template>
+                            </div>
+                            <button @click="openAddLinkModal()" class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-md transition-colors mt-1">
+                                <i class="fas fa-plus-circle text-blue-600"></i> Edit / Tambah Link
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Password Confirmation Modal for Public Link Edit -->
+    <div x-show="showAddLinkModal" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;" x-cloak>
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showAddLinkModal = false"></div>
+        <div class="bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-100 max-w-md w-full p-6 relative z-10">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-link text-blue-600"></i> Tambah / Edit Link Kegiatan
+                </h3>
+                <button @click="showAddLinkModal = false" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-lg"></i></button>
+            </div>
+
+            <template x-if="linkError">
+                <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span x-text="linkError"></span>
+                </div>
+            </template>
+
+            <form @submit.prevent="submitLink()">
+                <div class="space-y-3 mb-5">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Judul / Label Tautan</label>
+                        <input type="text" x-model="linkTitle" placeholder="Contoh: Dokumentasi Drive, Reels IG, TikTok" class="w-full p-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">URL Tautan</label>
+                        <input type="url" x-model="linkUrl" placeholder="https://..." class="w-full p-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div class="bg-amber-50/70 p-3 rounded-lg border border-amber-200/70">
+                        <label class="block text-xs font-bold text-amber-900 mb-1"><i class="fas fa-key text-amber-600 mr-1"></i> Kode Konfirmasi (PIN Admin)</label>
+                        <input type="password" x-model="linkPin" placeholder="Masukkan PIN Kode Admin" class="w-full p-2.5 text-sm border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white font-mono tracking-widest font-bold text-slate-800" required>
+                        <p class="text-[11px] text-amber-700 mt-1">Hanya pengguna yang memiliki kode PIN valid dari Admin yang dapat menyimpan perubahan tautan.</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" @click="showAddLinkModal = false" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium">Batal</button>
+                    <button type="submit" :disabled="isSubmittingLink" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50">
+                        <template x-if="isSubmittingLink"><i class="fas fa-spinner fa-spin"></i></template>
+                        <span>Simpan Tautan</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -380,6 +461,73 @@
                 if (!dateString) return '';
                 let d = new Date(dateString);
                 return d.getDate() + ' ' + this.monthNames[d.getMonth()] + ' ' + d.getFullYear();
+            },
+
+            showAddLinkModal: false,
+            linkTitle: '',
+            linkUrl: '',
+            linkPin: '',
+            linkError: '',
+            isSubmittingLink: false,
+
+            isKunjungan(event) {
+                if (!event) return false;
+                let titleMatch = event.title && event.title.toLowerCase().includes('kunjungan');
+                let catMatch = event.categories && event.categories.some(c => c.name && c.name.toLowerCase().includes('kunjungan'));
+                return titleMatch || catMatch;
+            },
+
+            getEventLinks(event) {
+                if (!event) return [];
+                if (Array.isArray(event.links) && event.links.length > 0) {
+                    return event.links;
+                }
+                if (event.link) {
+                    return [{ title: 'Tautan Utama', url: event.link }];
+                }
+                return [];
+            },
+
+            openAddLinkModal() {
+                this.linkTitle = '';
+                this.linkUrl = '';
+                this.linkPin = '';
+                this.linkError = '';
+                this.showAddLinkModal = true;
+            },
+
+            async submitLink() {
+                if (!this.selectedEvent) return;
+                this.isSubmittingLink = true;
+                this.linkError = '';
+
+                try {
+                    let response = await fetch(`/api/events/${this.selectedEvent.id}/update-link`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                        },
+                        body: JSON.stringify({
+                            title: this.linkTitle,
+                            url: this.linkUrl,
+                            pin: this.linkPin
+                        })
+                    });
+
+                    let data = await response.json();
+                    if (response.ok && data.success) {
+                        this.selectedEvent.links = data.links;
+                        this.showAddLinkModal = false;
+                        alert(data.message || 'Tautan berhasil ditambahkan!');
+                    } else {
+                        this.linkError = data.message || 'Kode Konfirmasi (PIN) salah!';
+                    }
+                } catch (e) {
+                    this.linkError = 'Gagal menyimpan tautan. Silakan periksa koneksi internet Anda.';
+                } finally {
+                    this.isSubmittingLink = false;
+                }
             }
         }));
     });

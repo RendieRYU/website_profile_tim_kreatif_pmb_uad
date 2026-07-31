@@ -88,24 +88,32 @@
                                 </div>
                             </template>
                             <template x-for="event in modalEvents" :key="event.id">
-                                <div class="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100/50 transition-colors flex items-center justify-between gap-4">
+                                <div class="p-4 rounded-xl border transition-colors flex items-center justify-between gap-4"
+                                     :class="event.title && event.title.toLowerCase().includes('kunjungan') 
+                                        ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' 
+                                        : 'border-slate-100 bg-slate-50 hover:bg-slate-100/50'">
                                     <div class="min-w-0 flex-1">
-                                        <p class="font-bold text-slate-800 text-sm leading-snug truncate" x-text="event.title"></p>
-                                        <p class="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
+                                        <p class="font-bold text-sm leading-snug truncate" :class="event.title && event.title.toLowerCase().includes('kunjungan') ? 'text-white' : 'text-slate-800'" x-text="event.title"></p>
+                                        <p class="text-xs mt-1 flex items-center gap-1.5" :class="event.title && event.title.toLowerCase().includes('kunjungan') ? 'text-indigo-200' : 'text-slate-500'">
                                             <i class="far fa-calendar text-[11px]"></i>
                                             <span x-text="new Date(event.event_date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})"></span>
                                         </p>
                                     </div>
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0" 
-                                          :class="{
-                                              'bg-blue-100 text-blue-800 border border-blue-200': event.status === 'acc',
-                                              'bg-green-100 text-green-800 border border-green-200': event.status === 'selesai',
-                                              'bg-yellow-100 text-yellow-800 border border-yellow-200': event.status === 'ide',
-                                              'bg-red-100 text-red-800 border border-red-200': event.status === 'ditunda',
-                                              'bg-purple-100 text-purple-800 border border-purple-200': event.status === 'terjadwal'
-                                          }"
-                                          x-text="event.status">
-                                    </span>
+                                    <template x-if="event.title && event.title.toLowerCase().includes('kunjungan')">
+                                        <span class="bg-indigo-800 text-indigo-100 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0"><i class="fas fa-bus mr-1"></i> Kunjungan</span>
+                                    </template>
+                                    <template x-if="!event.title || !event.title.toLowerCase().includes('kunjungan')">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0" 
+                                              :class="{
+                                                  'bg-blue-100 text-blue-800 border border-blue-200': event.status === 'acc',
+                                                  'bg-green-100 text-green-800 border border-green-200': event.status === 'selesai',
+                                                  'bg-yellow-100 text-yellow-800 border border-yellow-200': event.status === 'ide',
+                                                  'bg-red-100 text-red-800 border border-red-200': event.status === 'ditunda',
+                                                  'bg-purple-100 text-purple-800 border border-purple-200': event.status === 'terjadwal'
+                                              }"
+                                              x-text="event.status">
+                                        </span>
+                                    </template>
                                 </div>
                             </template>
                         </div>

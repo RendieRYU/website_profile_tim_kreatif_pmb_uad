@@ -21,7 +21,15 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        html, body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
+        main, aside, .overflow-y-auto {
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
     </style>
     @stack('styles')
 </head>

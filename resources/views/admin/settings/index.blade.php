@@ -81,6 +81,15 @@
             </div>
         </div>
 
+        <div>
+            <h2 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2"><i class="fas fa-key text-amber-500 mr-2"></i> Keamanan & Edit Link Publik</h2>
+            <div class="max-w-md">
+                <label class="block text-sm font-medium text-slate-700 mb-1">Kode Konfirmasi Edit Link Kalender (PIN)</label>
+                <input type="text" name="calendar_link_pin" value="{{ $settings['calendar_link_pin'] ?? '123456' }}" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono tracking-widest text-lg font-bold" placeholder="123456" required>
+                <p class="text-xs text-slate-500 mt-1">Kode PIN ini diminta saat pengguna di kalender publik ingin menambahkan atau memperbarui link kegiatan.</p>
+            </div>
+        </div>
+
         <div class="pt-4">
             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Simpan Pengaturan</button>
         </div>

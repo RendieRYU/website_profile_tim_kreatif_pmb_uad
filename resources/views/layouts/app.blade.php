@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Tim Kreatif PMB UAD')</title>
     <!-- Favicon -->
     @if(\App\Models\Setting::get('site_logo'))
@@ -40,7 +41,15 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        html, body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
+        main, .overflow-y-auto {
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
         .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);

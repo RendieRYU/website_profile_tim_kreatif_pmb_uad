@@ -44,4 +44,44 @@ class EventApiController extends Controller
 
         return response()->json($events);
     }
+
+    public function updateLink(Request $request, Event $event)
+    {
+        $request->validate([
+            'pin' => 'required',
+            'title' => 'nullable|string',
+            'url' => 'required|url',
+        ]);
+
+        $correctPin = \App\Models\Setting::get('calendar_link_pin', '123456');
+
+        if (trim($request->pin) !== trim($correctPin)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode Konfirmasi (PIN) salah! Silakan hubungi Admin.'
+            ], 422);
+        }
+
+        $links = is_array($event->links) ? $event->links : [];
+        if ($event->link && empty($links)) {
+            $links[] = ['title' => 'Tautan Utama', 'url' => $event->link];
+        }
+
+        $links[] = [
+            'title' => $request->title ?: 'Tautan Tambahan',
+            'url' => $request->url
+        ];
+
+        $event->links = $links;
+        if (empty($event->link)) {
+            $event->link = $request->url;
+        }
+        $event->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tautan kegiatan berhasil diperbarui!',
+            'links' => $event->links
+        ]);
+    }
 }

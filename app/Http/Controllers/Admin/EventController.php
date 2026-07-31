@@ -14,14 +14,36 @@ class EventController extends Controller
             return redirect()->route('admin.dashboard')->with('error', 'Belum ada periode yang aktif. Silakan aktifkan salah satu periode terlebih dahulu.');
         }
 
-        $events = Event::where('period_id', $activePeriod->id)->latest('event_date')->paginate(10);
-        return view('admin.events.index', compact('events')); 
+        $events = Event::with(['members.division', 'categories'])->where('period_id', $activePeriod->id)->latest('event_date')->paginate(15);
+        $allEvents = Event::with(['members.division', 'categories'])->where('period_id', $activePeriod->id)->get();
+        $divisions = \App\Models\Division::all()->keyBy('id');
+
+        $allEvents->transform(function($event) use ($divisions) {
+            $event->members->transform(function($member) use ($divisions) {
+                $pivotDivisionId = $member->pivot->division_id ?? $member->division_id;
+                $member->pivot_division = $divisions->get($pivotDivisionId);
+                $colors = [
+                    'Inti' => '#8b5cf6',
+                    'Creative' => '#ec4899',
+                    'Programmer' => '#3b82f6',
+                    'Media' => '#f59e0b',
+                ];
+                $divName = $member->pivot_division ? $member->pivot_division->name : '';
+                $member->color = $colors[$divName] ?? '#64748b';
+                return $member;
+            });
+            $event->formatted_time = $event->event_time ? $event->event_time->format('H:i') : null;
+            return $event;
+        });
+
+        return view('admin.events.index', compact('events', 'allEvents', 'activePeriod')); 
     }
-    public function create() { 
+    public function create(Request $request) { 
         $activePeriod = \App\Models\Period::where('is_active', true)->first();
         $members = $activePeriod ? Member::with('division')->where('period_id', $activePeriod->id)->get() : collect();
         $categories = Category::all();
-        return view('admin.events.create', compact('members', 'categories')); 
+        $selectedDate = $request->query('date', date('Y-m-d'));
+        return view('admin.events.create', compact('members', 'categories', 'selectedDate')); 
     }
     public function store(Request $request) {
         $activePeriod = \App\Models\Period::where('is_active', true)->first();
@@ -31,9 +53,28 @@ class EventController extends Controller
 
         $validated = $request->validate([
             'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable|date_format:H:i', 'link' => 'nullable|url',
-            'status' => 'required|in:ide,acc,selesai,ditunda,terjadwal'
+            'status' => 'required|in:ide,acc,selesai,ditunda,terjadwal',
+            'links' => 'nullable|array',
+            'links.*.title' => 'nullable|string',
+            'links.*.url' => 'nullable|url'
         ]);
         
+        $cleanLinks = [];
+        if ($request->has('links') && is_array($request->links)) {
+            foreach ($request->links as $l) {
+                if (!empty($l['url'])) {
+                    $cleanLinks[] = [
+                        'title' => !empty($l['title']) ? $l['title'] : 'Tautan',
+                        'url' => $l['url']
+                    ];
+                }
+            }
+        }
+        $validated['links'] = $cleanLinks;
+        if (empty($validated['link']) && !empty($cleanLinks)) {
+            $validated['link'] = $cleanLinks[0]['url'];
+        }
+
         $validated['period_id'] = $activePeriod->id;
         
         $event = Event::create($validated);
@@ -65,8 +106,28 @@ class EventController extends Controller
     public function update(Request $request, Event $event) {
         $validated = $request->validate([
             'title' => 'required', 'description' => 'nullable|string', 'event_date' => 'required|date', 'event_time' => 'nullable', 'link' => 'nullable|url',
-            'status' => 'required|in:ide,acc,selesai,ditunda,terjadwal'
+            'status' => 'required|in:ide,acc,selesai,ditunda,terjadwal',
+            'links' => 'nullable|array',
+            'links.*.title' => 'nullable|string',
+            'links.*.url' => 'nullable|url'
         ]);
+
+        $cleanLinks = [];
+        if ($request->has('links') && is_array($request->links)) {
+            foreach ($request->links as $l) {
+                if (!empty($l['url'])) {
+                    $cleanLinks[] = [
+                        'title' => !empty($l['title']) ? $l['title'] : 'Tautan',
+                        'url' => $l['url']
+                    ];
+                }
+            }
+        }
+        $validated['links'] = $cleanLinks;
+        if (empty($validated['link']) && !empty($cleanLinks)) {
+            $validated['link'] = $cleanLinks[0]['url'];
+        }
+
         $event->update($validated);
         if ($request->has('members')) {
             $syncData = [];

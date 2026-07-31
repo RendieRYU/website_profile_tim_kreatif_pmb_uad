@@ -15,7 +15,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal</label>
-                <input type="date" name="event_date" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
+                <input type="date" name="event_date" value="{{ old('event_date', $selectedDate ?? date('Y-m-d')) }}" class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" required>
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Waktu (Opsional)</label>
@@ -45,9 +45,24 @@
                     @endforeach
                 </div>
             </div>
-            <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-slate-700 mb-1">Tautan Postingan / Sosmed (Opsional)</label>
-                <input type="url" name="link" placeholder="Contoh: https://instagram.com/..." class="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <div class="md:col-span-2" x-data="{ 
+                links: [{ title: '', url: '' }],
+                addLink() { this.links.push({ title: '', url: '' }); },
+                removeLink(index) { if(this.links.length > 1) { this.links.splice(index, 1); } else { this.links[0] = { title: '', url: '' }; } }
+            }">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-slate-700">Tautan Kegiatan / Media Sosial (Bisa lebih dari 1)</label>
+                    <button type="button" @click="addLink()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded-md font-semibold transition-colors flex items-center gap-1"><i class="fas fa-plus"></i> Tambah Tautan</button>
+                </div>
+                <div class="space-y-3 p-4 border border-slate-200 rounded-lg bg-slate-50">
+                    <template x-for="(item, index) in links" :key="index">
+                        <div class="flex items-center gap-2">
+                            <input type="text" :name="'links['+index+'][title]'" x-model="item.title" placeholder="Label/Judul (misal: IG, TikTok, Drive)" class="w-1/3 p-2 text-sm border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <input type="url" :name="'links['+index+'][url]'" x-model="item.url" placeholder="https://..." class="flex-1 p-2 text-sm border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <button type="button" @click="removeLink(index)" class="p-2 text-red-500 hover:text-red-700 transition-colors" title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </template>
+                </div>
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-slate-700 mb-2">Petugas Bertugas</label>
@@ -67,6 +82,7 @@
                             <option value="FG">FG</option>
                             <option value="CC">CC</option>
                             <option value="BC">BC</option>
+                            <option value="DG">DG (Desain Grafis)</option>
                             <option value="Admin">Admin</option>
                             <option value="Lainnya">Lainnya...</option>
                         </select>

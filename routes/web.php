@@ -24,6 +24,7 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::get('/api/events/{year}/{month}', [EventApiController::class, 'getMonthEvents'])->name('api.events');
+Route::post('/api/events/{event}/update-link', [EventApiController::class, 'updateLink'])->name('api.events.update-link');
 
 // Admin Routes
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
