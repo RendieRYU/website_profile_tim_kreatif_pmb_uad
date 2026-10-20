@@ -340,7 +340,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('calendarData', () => ({
             currentDate: new Date(),
-            currentYear: {{ isset($activePeriod) && is_numeric($activePeriod->name) ? (int)$activePeriod->name : 'new Date().getFullYear()' }},
+            currentYear: new Date().getFullYear(),
             currentMonth: new Date().getMonth(),
             events: [],
             calendarDays: [],

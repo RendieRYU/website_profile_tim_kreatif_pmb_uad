@@ -550,7 +550,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('adminCalendar', () => ({
             viewMode: 'calendar',
-            currentYear: {{ isset($activePeriod) && is_numeric($activePeriod->name) ? (int)$activePeriod->name : 'new Date().getFullYear()' }},
+            currentYear: new Date().getFullYear(),
             currentMonth: new Date().getMonth(),
             events: {!! json_encode($allEvents) !!},
             categories: {!! json_encode($categories) !!},
