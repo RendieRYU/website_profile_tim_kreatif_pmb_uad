@@ -545,13 +545,27 @@
 </div>
 @endsection
 
+@php
+    $periodYear = isset($activePeriod) && is_numeric($activePeriod->name) ? (int)$activePeriod->name : (int)date('Y');
+    $pStart = \Carbon\Carbon::createFromDate($periodYear - 1, 10, 1)->startOfDay();
+    $pEnd = \Carbon\Carbon::createFromDate($periodYear, 9, 30)->endOfDay();
+    $now = \Carbon\Carbon::now();
+    if ($now->between($pStart, $pEnd)) {
+        $initYear = (int)$now->year;
+        $initMonth = (int)$now->month - 1;
+    } else {
+        $initYear = (int)$periodYear - 1;
+        $initMonth = 9; // Oktober
+    }
+@endphp
+
 @push('scripts')
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('adminCalendar', () => ({
             viewMode: 'calendar',
-            currentYear: new Date().getFullYear(),
-            currentMonth: new Date().getMonth(),
+            currentYear: {{ $initYear }},
+            currentMonth: {{ $initMonth }},
             events: {!! json_encode($allEvents) !!},
             categories: {!! json_encode($categories) !!},
             members: {!! json_encode($members) !!},
