@@ -27,9 +27,9 @@
                         @endif
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
-                    <div class="p-6 text-center">
-                        <h3 class="text-lg font-bold text-slate-800 mb-1 line-clamp-1">{{ $leader->name }}</h3>
-                        <p class="text-blue-600 font-medium text-sm mt-1">{{ $leader->position }}</p>
+                    <div class="p-5 text-center">
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1 leading-snug break-words">{{ $leader->name }}</h3>
+                        <p class="text-blue-600 font-medium text-xs sm:text-sm mt-1 leading-normal">{{ $leader->position }}</p>
                     </div>
                 </div>
                 @endforeach
@@ -75,8 +75,8 @@
                             @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-slate-800 mb-1 line-clamp-1">{{ $member->full_name }}</h3>
+                        <div class="p-5">
+                            <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1 leading-snug break-words">{{ $member->full_name }}</h3>
                             <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2" 
                                  style="background-color: {{ $member->division ? $member->division->color_hex . '20' : '#e2e8f0' }}; 
                                         color: {{ $member->division ? $member->division->color_hex : '#64748b' }}">

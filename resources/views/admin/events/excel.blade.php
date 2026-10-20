@@ -36,6 +36,9 @@
             <th class="table-header">Link Dokumentasi</th>
             <th class="table-header">Kategori</th>
             <th class="table-header">Anggota Terlibat</th>
+            @foreach($customColumns ?? [] as $col)
+            <th class="table-header">{{ $col['name'] }}</th>
+            @endforeach
         </tr>
     </thead>
     <tbody>
@@ -56,6 +59,19 @@
             <td class="data-cell text-left">{{ $event->link ?? '-' }}</td>
             <td class="data-cell text-left">{{ $categoriesStr ?: '-' }}</td>
             <td class="data-cell text-left">{{ $membersStr ?: '-' }}</td>
+            @foreach($customColumns ?? [] as $col)
+            <td class="data-cell text-left">
+                @if(isset($event->custom_fields[$col['id']]))
+                    @if(($col['type'] ?? 'text') === 'checklist')
+                        {{ $event->custom_fields[$col['id']] ? 'Ya' : 'Tidak' }}
+                    @else
+                        {{ $event->custom_fields[$col['id']] }}
+                    @endif
+                @else
+                    -
+                @endif
+            </td>
+            @endforeach
         </tr>
         @endforeach
     </tbody>

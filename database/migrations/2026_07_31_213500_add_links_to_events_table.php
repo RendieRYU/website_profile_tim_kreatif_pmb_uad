@@ -12,9 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->json('links')->nullable()->after('link');
-        });
+        if (!Schema::hasColumn('events', 'links')) {
+            Schema::table('events', function (Blueprint $table) {
+                $table->json('links')->nullable()->after('link');
+            });
+        }
 
         // Migrasikan data link lama ke format JSON links jika ada
         $events = DB::table('events')->whereNotNull('link')->get();
@@ -35,8 +37,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('links');
-        });
+        if (Schema::hasColumn('events', 'links')) {
+            Schema::table('events', function (Blueprint $table) {
+                $table->dropColumn('links');
+            });
+        }
     }
 };

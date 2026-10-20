@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Kalender Kegiatan - Tim Kreatif PMB UAD')
 @section('content')
-
+<x-public-blur-lock>
 <div class="w-full max-w-full px-4 sm:px-6 lg:px-8 py-8" x-data="calendarData()">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 class="text-3xl font-bold text-slate-800">Kalender Kegiatan</h1>
@@ -65,7 +65,8 @@
                                                     'bg-yellow-500': event.status === 'ide',
                                                     'bg-red-500': event.status === 'ditunda',
                                                     'bg-blue-500': event.status === 'acc',
-                                                    'bg-purple-500': event.status === 'terjadwal'
+                                                    'bg-purple-500': event.status === 'terjadwal',
+                                                    'bg-rose-500': event.status === 'ditolak'
                                                 }"></span>
                                             <span class="text-[10px] uppercase font-medium tracking-wider text-slate-400" x-text="event.status"></span>
                                         </div>
@@ -97,7 +98,8 @@
                                       'bg-yellow-500': event.status === 'ide',
                                       'bg-red-500': event.status === 'ditunda',
                                       'bg-blue-500': event.status === 'acc',
-                                      'bg-purple-500': event.status === 'terjadwal'
+                                      'bg-purple-500': event.status === 'terjadwal',
+                                      'bg-rose-500': event.status === 'ditolak'
                                   }"></span>
                         </template>
                     </div>
@@ -134,7 +136,8 @@
                                             'bg-yellow-500': event.status === 'ide',
                                             'bg-red-500': event.status === 'ditunda',
                                             'bg-blue-500': event.status === 'acc',
-                                            'bg-purple-500': event.status === 'terjadwal'
+                                            'bg-purple-500': event.status === 'terjadwal',
+                                            'bg-rose-500': event.status === 'ditolak'
                                         }"></span>
                                     <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider" x-text="event.status"></span>
                                 </div>
@@ -200,7 +203,8 @@
                                     'bg-yellow-500': selectedEvent?.status === 'ide',
                                     'bg-red-500': selectedEvent?.status === 'ditunda',
                                     'bg-blue-500': selectedEvent?.status === 'acc',
-                                    'bg-purple-500': selectedEvent?.status === 'terjadwal'
+                                    'bg-purple-500': selectedEvent?.status === 'terjadwal',
+                                    'bg-rose-500': selectedEvent?.status === 'ditolak'
                                 }"></span>
                             <span class="text-sm font-medium capitalize" x-text="selectedEvent?.status"></span>
                         </div>
@@ -313,6 +317,7 @@
         </div>
     </div>
 </div>
+</x-public-blur-lock>
 
 @push('styles')
 <style>
@@ -335,7 +340,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('calendarData', () => ({
             currentDate: new Date(),
-            currentYear: new Date().getFullYear(),
+            currentYear: {{ isset($activePeriod) && is_numeric($activePeriod->name) ? (int)$activePeriod->name : 'new Date().getFullYear()' }},
             currentMonth: new Date().getMonth(),
             events: [],
             calendarDays: [],
@@ -346,6 +351,20 @@
             
             get monthName() {
                 return this.monthNames[this.currentMonth];
+            },
+
+            getDateStr(val) {
+                if (!val) return '';
+                if (typeof val === 'string') {
+                    return val.split('T')[0];
+                }
+                if (val instanceof Date) {
+                    const y = val.getFullYear();
+                    const m = String(val.getMonth() + 1).padStart(2, '0');
+                    const d = String(val.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+                return '';
             },
 
             init() {
@@ -408,13 +427,17 @@
 
                 // Current month
                 for (let i = 1; i <= daysInMonth; i++) {
+                    const monthStr = String(this.currentMonth + 1).padStart(2, '0');
+                    const dayStr = String(i).padStart(2, '0');
+                    const fullDate = `${this.currentYear}-${monthStr}-${dayStr}`;
+
                     let dayEvents = this.events.filter(e => {
-                        let ed = new Date(e.event_date);
-                        return ed.getDate() === i;
+                        return this.getDateStr(e.event_date) === fullDate;
                     });
                     
                     this.calendarDays.push({
                         date: i,
+                        fullDate: fullDate,
                         isCurrentMonth: true,
                         isToday: isCurrentMonthYear && i === todayDate,
                         events: dayEvents
@@ -459,8 +482,15 @@
 
             formatDate(dateString) {
                 if (!dateString) return '';
-                let d = new Date(dateString);
-                return d.getDate() + ' ' + this.monthNames[d.getMonth()] + ' ' + d.getFullYear();
+                let str = this.getDateStr(dateString);
+                let parts = str.split('-');
+                if (parts.length === 3) {
+                    let y = parseInt(parts[0], 10);
+                    let m = parseInt(parts[1], 10) - 1;
+                    let d = parseInt(parts[2], 10);
+                    return `${d} ${this.monthNames[m]} ${y}`;
+                }
+                return str;
             },
 
             showAddLinkModal: false,

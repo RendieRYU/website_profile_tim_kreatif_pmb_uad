@@ -31,12 +31,15 @@ class TiktokPost extends Model
         'saves',
         'reposts',
         'new_followers',
+        'custom_fields',
     ];
+
+    protected $appends = ['total_engagement', 'er_by_post', 'er_by_reach'];
 
     protected function casts(): array
     {
         return [
-            'tanggal_posting' => 'date',
+            'tanggal_posting' => 'date:Y-m-d',
             'reach' => 'integer',
             'impression_home' => 'integer',
             'impression_profile' => 'integer',
@@ -51,6 +54,7 @@ class TiktokPost extends Model
             'saves' => 'integer',
             'reposts' => 'integer',
             'new_followers' => 'integer',
+            'custom_fields' => 'array',
         ];
     }
 

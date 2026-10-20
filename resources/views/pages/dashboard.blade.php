@@ -109,7 +109,8 @@
                                                   'bg-green-100 text-green-800 border border-green-200': event.status === 'selesai',
                                                   'bg-yellow-100 text-yellow-800 border border-yellow-200': event.status === 'ide',
                                                   'bg-red-100 text-red-800 border border-red-200': event.status === 'ditunda',
-                                                  'bg-purple-100 text-purple-800 border border-purple-200': event.status === 'terjadwal'
+                                                  'bg-purple-100 text-purple-800 border border-purple-200': event.status === 'terjadwal',
+                                                  'bg-rose-100 text-rose-800 border border-rose-200': event.status === 'ditolak'
                                               }"
                                               x-text="event.status">
                                         </span>

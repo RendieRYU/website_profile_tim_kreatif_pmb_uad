@@ -56,8 +56,8 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="p-6">
-                            <h3 class="text-lg font-bold text-slate-800 mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">{{ $member->full_name }}</h3>
+                        <div class="p-5">
+                            <h3 class="text-base sm:text-lg font-bold text-slate-800 mb-1 leading-snug break-words group-hover:text-blue-600 transition-colors">{{ $member->full_name }}</h3>
                             <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2" 
                                  style="background-color: {{ $member->division ? $member->division->color_hex . '20' : '#e2e8f0' }}; 
                                         color: {{ $member->division ? $member->division->color_hex : '#64748b' }}">

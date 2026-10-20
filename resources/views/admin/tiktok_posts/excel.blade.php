@@ -23,6 +23,9 @@
             <th style="font-weight: bold; background-color: #f1f5f9;">New Followers</th>
             <th style="font-weight: bold; background-color: #dbeafe;">ER by Post (%)</th>
             <th style="font-weight: bold; background-color: #f3e8ff;">ER by Reach (%)</th>
+            @foreach($customColumns ?? [] as $col)
+            <th style="font-weight: bold; background-color: #e0e7ff;">{{ $col['name'] }}</th>
+            @endforeach
         </tr>
     </thead>
     <tbody>
@@ -50,6 +53,19 @@
             <td>{{ $post->new_followers }}</td>
             <td style="color: #2563eb; font-weight: bold;">{{ $post->er_by_post }}%</td>
             <td style="color: #9333ea; font-weight: bold;">{{ $post->er_by_reach }}%</td>
+            @foreach($customColumns ?? [] as $col)
+            <td>
+                @if(isset($post->custom_fields[$col['id']]))
+                    @if(($col['type'] ?? '') === 'checklist')
+                        {{ $post->custom_fields[$col['id']] === 'ya' ? 'Ya' : 'Tidak' }}
+                    @else
+                        {{ $post->custom_fields[$col['id']] }}
+                    @endif
+                @else
+                    -
+                @endif
+            </td>
+            @endforeach
         </tr>
         @endforeach
     </tbody>

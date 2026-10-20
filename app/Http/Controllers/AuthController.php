@@ -16,8 +16,8 @@ class AuthController extends Controller
     public function login(\Illuminate\Http\Request $request)
     {
         $credentials = $request->validate([
-            'username' => ['required'],
-            'password' => ['required'],
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:3'],
         ]);
 
         if (Auth::attempt($credentials)) {

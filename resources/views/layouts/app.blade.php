@@ -43,12 +43,6 @@
     <style>
         html, body {
             font-family: 'Inter', sans-serif;
-            overscroll-behavior: none;
-            overscroll-behavior-y: none;
-        }
-        main, .overflow-y-auto {
-            overscroll-behavior: none;
-            overscroll-behavior-y: none;
         }
         .glass {
             background: rgba(255, 255, 255, 0.7);
@@ -83,9 +77,11 @@
                         <span class="font-bold text-xl text-primary tracking-tight">Kreatif PMB UAD</span>
                     </a>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
+                <div class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('home') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Dashboard</a>
                     <a href="{{ route('calendar') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Kalender</a>
+                    <a href="{{ route('projects.public') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Projek</a>
+                    <a href="{{ route('notes.public') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Catatan</a>
                     <a href="{{ route('about') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Tentang Kami</a>
                     <a href="{{ route('portfolio.index') }}" class="text-slate-600 hover:text-primary font-medium transition-colors">Portofolio</a>
                     @auth
@@ -106,6 +102,8 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="{{ route('home') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Dashboard</a>
                 <a href="{{ route('calendar') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Kalender</a>
+                <a href="{{ route('projects.public') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Projek</a>
+                <a href="{{ route('notes.public') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Catatan</a>
                 <a href="{{ route('about') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Tentang Kami</a>
                 <a href="{{ route('portfolio.index') }}" class="block px-3 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-md">Portofolio</a>
                 @auth

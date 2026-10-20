@@ -8,6 +8,7 @@ class CalendarController extends Controller
 {
     public function index()
     {
-        return view('pages.calendar');
+        $activePeriod = \App\Models\Period::where('is_active', true)->first();
+        return view('pages.calendar', compact('activePeriod'));
     }
 }
